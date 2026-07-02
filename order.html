@@ -3,6 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+(function(){
+  try{
+    var t = localStorage.getItem('prism-theme');
+    if(!t){ t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+    document.documentElement.setAttribute('data-theme', t);
+  }catch(e){}
+})();
+</script>
 <title>Commander — PRISM</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
@@ -50,11 +59,11 @@
   .model-cards{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--faint);margin-bottom:1.5rem}
   .model-card{padding:1.25rem 1.25rem;background:var(--bg);cursor:pointer;transition:background 0.2s;border:2px solid transparent;position:relative}
   .model-card input[type=radio]{position:absolute;opacity:0;width:0;height:0}
-  .model-card.selected,.model-card:has(input:checked){background:var(--ink);color:#fafaf8}
+  .model-card.selected,.model-card:has(input:checked){background:var(--ink);color:var(--bg)}
   .model-card-name{font-size:0.85rem;font-weight:500;margin-bottom:0.2rem}
   .model-card-price{font-family:'Instrument Serif',serif;font-size:1.5rem;font-weight:400}
   .model-card-desc{font-size:0.7rem;color:var(--muted);margin-top:0.3rem}
-  .model-card.selected .model-card-desc{color:rgba(250,250,248,0.5)}
+  .model-card.selected .model-card-desc{color:color-mix(in srgb, var(--bg) 55%, transparent)}
   .model-label{font-size:0.72rem;letter-spacing:0.12em;color:var(--muted);text-transform:uppercase;margin-bottom:0.75rem}
 
   .submit-btn{width:100%;background:var(--ink);color:var(--bg);padding:1.1rem;font-size:0.85rem;font-weight:400;letter-spacing:0.1em;border:none;cursor:pointer;font-family:'Instrument Sans',sans-serif;transition:opacity 0.2s;margin-top:0.5rem}
@@ -76,6 +85,73 @@
     .field-row{grid-template-columns:1fr}
     footer{flex-direction:column;gap:0.5rem}
   }
+
+  /* ================= THÈME SOMBRE / CLAIR + LIQUID GLASS ================= */
+  [data-theme="dark"] {
+    --bg: #0c0c0d;
+    --ink: #f1f1ec;
+    --muted: #93938d;
+    --faint: #29292b;
+  }
+  html, body { transition: background-color .4s ease, color .4s ease; }
+  nav, .theme-toggle, .form-wrap, .model-cards, .info-steps, .submit-btn, .model-card {
+    transition: background-color .4s ease, border-color .4s ease, box-shadow .4s ease;
+  }
+
+  .theme-toggle {
+    width: 38px; height: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: color-mix(in srgb, var(--bg) 45%, transparent);
+    border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+    -webkit-backdrop-filter: blur(14px) saturate(1.6);
+    backdrop-filter: blur(14px) saturate(1.6);
+    box-shadow: 0 4px 18px color-mix(in srgb, var(--ink) 10%, transparent), inset 0 1px 0 color-mix(in srgb, #fff 35%, transparent);
+    color: var(--ink); cursor: pointer; flex-shrink: 0; margin-left: 1.25rem;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .theme-toggle:hover { transform: scale(1.07); }
+  .theme-toggle .icon-moon { display: none; }
+  [data-theme="dark"] .theme-toggle .icon-sun { display: none; }
+  [data-theme="dark"] .theme-toggle .icon-moon { display: block; }
+
+  nav {
+    background: color-mix(in srgb, var(--bg) 65%, transparent) !important;
+    -webkit-backdrop-filter: blur(22px) saturate(1.6);
+    backdrop-filter: blur(22px) saturate(1.6);
+    border: 1px solid color-mix(in srgb, var(--ink) 8%, transparent) !important;
+    top: 0.85rem; left: 1.25rem; right: 1.25rem;
+    border-radius: 18px;
+    box-shadow: 0 8px 30px color-mix(in srgb, var(--ink) 8%, transparent);
+  }
+
+  .form-wrap, .model-cards {
+    background: color-mix(in srgb, var(--bg) 55%, transparent) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+    backdrop-filter: blur(18px) saturate(1.4);
+    border-radius: 20px !important;
+    overflow: hidden;
+    box-shadow: 0 10px 40px color-mix(in srgb, var(--ink) 6%, transparent);
+  }
+  .info-steps { border-radius: 20px !important; overflow: hidden; }
+  .model-card { background: color-mix(in srgb, var(--bg) 30%, transparent); }
+
+  .field input, .field select, .field textarea {
+    background: color-mix(in srgb, var(--bg) 60%, transparent) !important;
+    border-radius: 10px !important;
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  }
+  .submit-btn {
+    background: color-mix(in srgb, var(--ink) 88%, transparent) !important;
+    border-radius: 12px !important;
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    box-shadow: 0 6px 20px color-mix(in srgb, var(--ink) 18%, transparent);
+  }
+
+  @media (max-width: 768px) {
+    nav { top: 0.5rem; left: 0.6rem; right: 0.6rem; border-radius: 16px; padding: 0.75rem 1rem; }
+    .theme-toggle { width: 40px; height: 40px; margin-left: 0.6rem; }
+    .order-bar { margin: 0 0.6rem !important; }
+  }
 </style>
 </head>
 <body>
@@ -83,7 +159,7 @@
 <nav>
   <a class="nav-logo" href="index.html">
     <svg viewBox="0 0 115 24" height="18">
-      <g stroke="#111110" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <g stroke="var(--ink)" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <polygon points="12,1 2,23 22,23" stroke-width="1.6"/>
         <line x1="12" y1="1" x2="12" y2="23" stroke-width="1"/>
         <line x1="6" y1="14" x2="18" y2="14" stroke-width="1"/>
@@ -95,10 +171,14 @@
       <line x1="12" y1="23" x2="12" y2="28" stroke="#51cf66" stroke-width="1" stroke-linecap="round"/>
       <line x1="12" y1="23" x2="14" y2="28" stroke="#ffd43b" stroke-width="1" stroke-linecap="round"/>
       <line x1="12" y1="23" x2="16" y2="28" stroke="#ff6b6b" stroke-width="1" stroke-linecap="round"/>
-      <text x="30" y="17" font-family="-apple-system,sans-serif" font-size="14" font-weight="600" fill="#111110" letter-spacing="2">PRISM</text>
+      <text x="30" y="17" font-family="-apple-system,sans-serif" font-size="14" font-weight="600" fill="var(--ink)" letter-spacing="2">PRISM</text>
     </svg>
   </a>
   <a href="javascript:history.back()" class="nav-back">← Retour</a>
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Basculer mode sombre / clair" title="Mode sombre / clair">
+    <svg class="icon-sun" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.2"/><line x1="12" y1="1.5" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22.5"/><line x1="3.5" y1="12" x2="1" y2="12"/><line x1="23" y1="12" x2="20.5" y2="12"/><line x1="5" y1="5" x2="6.8" y2="6.8"/><line x1="17.2" y1="17.2" x2="19" y2="19"/><line x1="19" y1="5" x2="17.2" y2="6.8"/><line x1="6.8" y1="17.2" x2="5" y2="19"/></svg>
+    <svg class="icon-moon" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"/></svg>
+  </button>
 </nav>
 
 <div class="page">
@@ -147,7 +227,7 @@
       <h2>Configurer votre PRISM</h2>
     </div>
 
-    <form action="https://formspree.io/f/xwvykgdv" method="POST" id="orderForm">
+    <form action="https://formspree.io/f/TON_ID_ICI" method="POST" id="orderForm">
 
 
       <!-- MODEL -->
@@ -237,7 +317,7 @@
 <!-- SUCCESS STATE -->
 <div class="success-page" id="successPage">
   <svg viewBox="0 0 60 60" width="48" style="display:block;margin:0 auto 2rem;">
-    <g stroke="#111110" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <g stroke="var(--ink)" fill="none" stroke-linecap="round" stroke-linejoin="round">
       <polygon points="30,4 4,56 56,56" stroke-width="2"/>
       <line x1="30" y1="4" x2="30" y2="56" stroke-width="1.3"/>
       <line x1="15" y1="35" x2="45" y2="35" stroke-width="1.3"/>
@@ -256,20 +336,27 @@
 <footer>
   <a href="index.html" style="text-decoration:none">
     <svg viewBox="0 0 115 24" height="16">
-      <g stroke="#111110" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <g stroke="var(--ink)" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <polygon points="12,1 2,23 22,23" stroke-width="1.6"/>
         <line x1="12" y1="1" x2="12" y2="23" stroke-width="1"/>
         <line x1="6" y1="14" x2="18" y2="14" stroke-width="1"/>
         <line x1="2" y1="23" x2="18" y2="14" stroke-width="1"/>
         <line x1="22" y1="23" x2="6" y2="14" stroke-width="1"/>
       </g>
-      <text x="30" y="17" font-family="-apple-system,sans-serif" font-size="14" font-weight="600" fill="#111110" letter-spacing="2">PRISM</text>
+      <text x="30" y="17" font-family="-apple-system,sans-serif" font-size="14" font-weight="600" fill="var(--ink)" letter-spacing="2">PRISM</text>
     </svg>
   </a>
   <div class="footer-copy">© 2026 PRISM — Fabriquée avec soin en France</div>
 </footer>
 
 <script>
+  function toggleTheme(){
+    var root = document.documentElement;
+    var next = (root.getAttribute('data-theme') === 'dark') ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try{ localStorage.setItem('prism-theme', next); }catch(e){}
+  }
+
   // Model card toggle
   function selectModel(m) {
     document.getElementById('card-one').classList.toggle('selected', m === 'one');

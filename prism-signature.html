@@ -3,34 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+(function(){
+  try{
+    var t = localStorage.getItem('prism-theme');
+    if(!t){ t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+    document.documentElement.setAttribute('data-theme', t);
+  }catch(e){}
+})();
+</script>
 <title>PRISM SIGNATURE — Steam Machine AIO 599€</title>
-
-  <meta name="description" content="PRISM SIGNATURE — Console gaming AIO liquid cooled à 599€. RGB, logo gravé, SSD 1To, 100% sur mesure. Fabriquée en France."/>
-  <meta name="robots" content="index, follow"/>
-  <link rel="canonical" href="https://prism-machine.fr/prism-signature.html"/>
-  <meta property="og:type" content="product"/>
-  <meta property="og:title" content="PRISM SIGNATURE — Steam Machine AIO 599€"/>
-  <meta property="og:description" content="Console gaming liquid cooled AIO, RGB, logo gravé sur mesure, SSD 1To minimum. Fabriquée en France à partir de 599€."/>
-  <meta property="og:url" content="https://prism-machine.fr/prism-signature.html"/>
-  <meta property="og:image" content="https://prism-machine.fr/stealth-black.webp"/>
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    "name": "PRISM SIGNATURE",
-    "description": "Console gaming liquid cooled AIO, RGB, logo gravé sur mesure, SSD 1To minimum, certificat numéroté. Fabriquée en France.",
-    "brand": {"@type": "Brand", "name": "PRISM"},
-    "offers": {
-      "@type": "Offer",
-      "price": "599",
-      "priceCurrency": "EUR",
-      "availability": "https://schema.org/InStock",
-      "url": "https://prism-machine.fr/prism-signature.html",
-      "seller": {"@type": "Organization", "name": "PRISM"}
-    }
-  }
-  </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><polygon points='16,2 2,30 30,30' fill='none' stroke='%23fafaf8' stroke-width='2' stroke-linejoin='round'/><line x1='16' y1='2' x2='16' y2='30' stroke='%23fafaf8' stroke-width='1.2'/><line x1='8' y1='19' x2='24' y2='19' stroke='%23fafaf8' stroke-width='1.2'/><line x1='2' y1='30' x2='24' y2='19' stroke='%23fafaf8' stroke-width='1.2'/><line x1='30' y1='30' x2='8' y2='19' stroke='%23fafaf8' stroke-width='1.2'/></svg>">
 <style>
@@ -44,7 +27,7 @@
   .nav-back{font-size:0.75rem;color:var(--muted);text-decoration:none;letter-spacing:0.06em;border-bottom:1px solid rgba(250,250,248,0.15);padding-bottom:1px;transition:color 0.2s}
   .nav-back:hover{color:var(--light)}
   .nav-cta{border:1px solid rgba(250,250,248,0.25);color:var(--light);padding:0.45rem 1.3rem;font-size:0.8rem;letter-spacing:0.06em;text-decoration:none;transition:all 0.2s}
-  .nav-cta:hover{background:var(--light);color:#0a0a09}
+  .nav-cta:hover{background:var(--light);color:var(--bg)}
 
   /* HERO */
   .hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr}
@@ -58,7 +41,7 @@
   .hero-price{font-family:'Instrument Serif',serif;font-size:4rem;font-weight:400;letter-spacing:-0.02em;margin-bottom:0.5rem;line-height:1}
   .hero-price sup{font-size:1.75rem;vertical-align:super}
   .hero-desc{font-size:0.875rem;color:var(--muted);max-width:380px;line-height:1.7;margin-bottom:2.5rem}
-  .btn-order{display:inline-block;background:var(--light);color:#0a0a09;padding:0.9rem 2.5rem;font-size:0.85rem;font-weight:500;letter-spacing:0.08em;text-decoration:none;transition:opacity 0.2s;font-family:'Instrument Sans',sans-serif}
+  .btn-order{display:inline-block;background:var(--light);color:var(--bg);padding:0.9rem 2.5rem;font-size:0.85rem;font-weight:500;letter-spacing:0.08em;text-decoration:none;transition:opacity 0.2s;font-family:'Instrument Sans',sans-serif}
   .btn-order:hover{opacity:0.85}
   .hero-badge{display:inline-flex;align-items:center;gap:0.5rem;border:1px solid rgba(132,94,247,0.3);padding:0.3rem 0.85rem;font-size:0.7rem;letter-spacing:0.1em;color:var(--purple);margin-bottom:1.5rem;width:fit-content}
   .hero-badge span{width:5px;height:5px;border-radius:50%;background:var(--purple);animation:pulse 2s infinite}
@@ -102,7 +85,7 @@
   /* ORDER BAR */
   .order-bar{position:sticky;bottom:0;background:rgba(132,94,247,0.12);backdrop-filter:blur(20px);border-top:1px solid rgba(132,94,247,0.25);display:flex;align-items:center;justify-content:space-between;padding:1.25rem 3rem;z-index:50}
   .order-bar-price{font-family:'Instrument Serif',serif;font-size:1.75rem;font-weight:400;letter-spacing:-0.02em;color:var(--light)}
-  .order-bar a{background:var(--light);color:#0a0a09;padding:0.75rem 2rem;font-size:0.8rem;font-weight:500;letter-spacing:0.08em;text-decoration:none;transition:opacity 0.2s;font-family:'Instrument Sans',sans-serif}
+  .order-bar a{background:#fafaf8;color:#111110;padding:0.75rem 2rem;font-size:0.8rem;font-weight:500;letter-spacing:0.08em;text-decoration:none;transition:opacity 0.2s;font-family:'Instrument Sans',sans-serif}
   .order-bar a:hover{opacity:0.8}
 
   footer{border-top:1px solid var(--faint);padding:2rem 3rem;display:flex;justify-content:space-between;align-items:center}
@@ -121,6 +104,77 @@
     .order-bar{padding:1rem 1.5rem;flex-direction:column;gap:1rem;align-items:flex-start}
     footer{flex-direction:column;gap:0.5rem}
   }
+
+  /* ================= THÈME CLAIR / SOMBRE + LIQUID GLASS ================= */
+  /* Cette page est sombre par défaut (identité PRISM SIGNATURE) ; le mode clair l'inverse */
+  [data-theme="light"] {
+    --bg: #fafaf8;
+    --light: #111110;
+    --muted: rgba(17,17,16,0.55);
+    --faint: rgba(17,17,16,0.1);
+  }
+  html, body { transition: background-color .4s ease, color .4s ease; }
+  nav, .theme-toggle, .includes, .specs, .diff-grid, .order-bar, .btn-order {
+    transition: background-color .4s ease, border-color .4s ease, box-shadow .4s ease;
+  }
+
+  .theme-toggle {
+    width: 38px; height: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: color-mix(in srgb, var(--bg) 30%, transparent);
+    border: 1px solid color-mix(in srgb, var(--light) 15%, transparent);
+    -webkit-backdrop-filter: blur(14px) saturate(1.6);
+    backdrop-filter: blur(14px) saturate(1.6);
+    box-shadow: 0 4px 18px rgba(0,0,0,0.25), inset 0 1px 0 color-mix(in srgb, #fff 25%, transparent);
+    color: var(--light); cursor: pointer; flex-shrink: 0; margin-left: 1.25rem;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .theme-toggle:hover { transform: scale(1.07); }
+  .theme-toggle .icon-sun { display: none; }
+  [data-theme="light"] .theme-toggle .icon-sun { display: block; }
+  [data-theme="light"] .theme-toggle .icon-moon { display: none; }
+
+  nav {
+    background: color-mix(in srgb, var(--bg) 65%, transparent) !important;
+    -webkit-backdrop-filter: blur(22px) saturate(1.6);
+    backdrop-filter: blur(22px) saturate(1.6);
+    border: 1px solid color-mix(in srgb, var(--light) 8%, transparent) !important;
+    top: 0.85rem; left: 1.25rem; right: 1.25rem;
+    border-radius: 18px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+  }
+
+  .includes, .specs, .diff-grid {
+    background: color-mix(in srgb, var(--bg) 45%, transparent) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+    backdrop-filter: blur(18px) saturate(1.4);
+    border-radius: 20px !important;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  }
+
+  .order-bar {
+    border-radius: 20px !important;
+    bottom: 1rem !important;
+    margin: 0 1.25rem !important;
+    border: 1px solid rgba(132,94,247,0.25);
+  }
+  .btn-order {
+    border-radius: 12px !important;
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  }
+
+  @media (max-width: 768px) {
+    nav { top: 0.5rem; left: 0.6rem; right: 0.6rem; border-radius: 16px; padding: 0.75rem 1rem; }
+    .theme-toggle { width: 40px; height: 40px; margin-left: 0.6rem; }
+    .nav-back { display: none; }
+    .nav-cta { padding: 0.4rem 1rem; font-size: 0.75rem; }
+    .order-bar { margin: 0 0.6rem !important; padding: 1rem 1.1rem !important; }
+    .order-bar > div:last-child { width: 100%; }
+    .order-bar > div:last-child span { display: none; }
+    .order-bar a { display: block; width: 100%; text-align: center; padding: 0.8rem 1rem; }
+    .order-bar-price { font-size: 1.4rem; }
+  }
 </style>
 </head>
 <body>
@@ -128,7 +182,7 @@
 <nav>
   <a class="nav-logo" href="index.html">
     <svg viewBox="0 0 115 24" height="18">
-      <g stroke="#fafaf8" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <g stroke="var(--light)" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <polygon points="12,1 2,23 22,23" stroke-width="1.6"/>
         <line x1="12" y1="1" x2="12" y2="23" stroke-width="1"/>
         <line x1="6" y1="14" x2="18" y2="14" stroke-width="1"/>
@@ -140,11 +194,15 @@
       <line x1="12" y1="23" x2="12" y2="28" stroke="#51cf66" stroke-width="1" stroke-linecap="round"/>
       <line x1="12" y1="23" x2="14" y2="28" stroke="#ffd43b" stroke-width="1" stroke-linecap="round"/>
       <line x1="12" y1="23" x2="16" y2="28" stroke="#ff6b6b" stroke-width="1" stroke-linecap="round"/>
-      <text x="30" y="17" font-family="-apple-system,sans-serif" font-size="14" font-weight="600" fill="#fafaf8" letter-spacing="2">PRISM</text>
+      <text x="30" y="17" font-family="-apple-system,sans-serif" font-size="14" font-weight="600" fill="var(--light)" letter-spacing="2">PRISM</text>
     </svg>
   </a>
   <a href="index.html" class="nav-back">← Retour</a>
   <a href="order.html?model=signature" class="nav-cta">Commander</a>
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Basculer mode sombre / clair" title="Mode sombre / clair">
+    <svg class="icon-sun" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.2"/><line x1="12" y1="1.5" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22.5"/><line x1="3.5" y1="12" x2="1" y2="12"/><line x1="23" y1="12" x2="20.5" y2="12"/><line x1="5" y1="5" x2="6.8" y2="6.8"/><line x1="17.2" y1="17.2" x2="19" y2="19"/><line x1="19" y1="5" x2="17.2" y2="6.8"/><line x1="6.8" y1="17.2" x2="5" y2="19"/></svg>
+    <svg class="icon-moon" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"/></svg>
+  </button>
 </nav>
 
 <!-- HERO -->
@@ -264,18 +322,27 @@
 <footer>
   <a href="index.html" style="text-decoration:none">
     <svg viewBox="0 0 115 24" height="16">
-      <g stroke="#fafaf8" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <g stroke="var(--light)" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <polygon points="12,1 2,23 22,23" stroke-width="1.6"/>
         <line x1="12" y1="1" x2="12" y2="23" stroke-width="1"/>
         <line x1="6" y1="14" x2="18" y2="14" stroke-width="1"/>
         <line x1="2" y1="23" x2="18" y2="14" stroke-width="1"/>
         <line x1="22" y1="23" x2="6" y2="14" stroke-width="1"/>
       </g>
-      <text x="30" y="17" font-family="-apple-system,sans-serif" font-size="14" font-weight="600" fill="#fafaf8" letter-spacing="2">PRISM</text>
+      <text x="30" y="17" font-family="-apple-system,sans-serif" font-size="14" font-weight="600" fill="var(--light)" letter-spacing="2">PRISM</text>
     </svg>
   </a>
   <div class="footer-copy">© 2026 PRISM — Fabriquée avec soin en France</div>
 </footer>
+
+<script>
+  function toggleTheme(){
+    var root = document.documentElement;
+    var next = (root.getAttribute('data-theme') === 'dark') ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try{ localStorage.setItem('prism-theme', next); }catch(e){}
+  }
+</script>
 
 </body>
 </html>
