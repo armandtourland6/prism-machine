@@ -161,6 +161,29 @@
     .order-bar a { flex: 1; text-align: center; padding: 0.7rem 1rem; }
     .order-bar-price { font-size: 1.4rem; }
   }
+
+  /* ================= Made in France + micro-interactions ================= */
+  .fr-badge{
+    display:inline-flex;align-items:center;gap:0.55rem;
+    padding:0.4rem 0.9rem 0.4rem 0.5rem;
+    border-radius:999px;
+    background: color-mix(in srgb, var(--bg) 45%, transparent);
+    border:1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+    -webkit-backdrop-filter: blur(12px) saturate(1.5);
+    backdrop-filter: blur(12px) saturate(1.5);
+    font-size:0.72rem; letter-spacing:0.04em; color:var(--ink); font-weight:500;
+  }
+  .fr-flag{
+    display:inline-block;width:17px;height:12px;border-radius:2px;flex-shrink:0;
+    background: linear-gradient(90deg, #0055A4 0 33.3%, #fff 33.3% 66.6%, #EF4135 66.6% 100%);
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.1);
+  }
+  .fr-badge-light{ color:rgba(255,255,255,0.85); background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.18); }
+  .trust-row{ display:flex; flex-wrap:wrap; gap:0.6rem; }
+
+  .include-item, .btn-order { transition: background-color .3s ease, transform .25s ease, box-shadow .25s ease; }
+  .include-item:hover { background: color-mix(in srgb, var(--ink) 4%, transparent); }
+  .btn-order:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(0,0,0,0.2); }
 </style>
 </head>
 <body>
@@ -198,6 +221,9 @@
     <div class="hero-price"><sup>€</sup>399</div>
     <p class="hero-desc">APU PS5, refroidissement ventilateur Arctic P12 Pro, boîtier PETG-CF imprimé 3D. Prête à jouer dès l'allumage.</p>
     <a href="order.html" class="btn-order">Commander maintenant</a>
+    <div class="trust-row" style="margin-top:1.5rem;">
+      <span class="fr-badge fr-badge-light"><span class="fr-flag"></span>Assemblée à la main en France</span>
+    </div>
   </div>
 </div>
 
@@ -276,7 +302,7 @@
       <text x="30" y="17" font-family="-apple-system,sans-serif" font-size="14" font-weight="600" fill="var(--ink)" letter-spacing="2">PRISM</text>
     </svg>
   </a>
-  <div class="footer-copy">© 2026 PRISM — Fabriquée avec soin en France</div>
+  <div class="footer-copy" style="display:flex;align-items:center;gap:0.5rem;"><span class="fr-flag" style="width:15px;height:11px;border-radius:2px;display:inline-block;"></span>© 2026 PRISM — Fabriquée avec soin en France</div>
 </footer>
 
 <script>
