@@ -283,6 +283,17 @@
   }
   .feature:hover { background: color-mix(in srgb, var(--ink) 4%, transparent); }
 
+  /* ================= Comètes animées (hero) ================= */
+  .hero-comets{
+    position: absolute !important;
+    inset: 0;
+    width: 100%; height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    mix-blend-mode: screen;
+    opacity: 0.95;
+  }
+
   .nav-burger{ display:none; width:40px; height:40px; border-radius:50%; align-items:center; justify-content:center;
     background: color-mix(in srgb, var(--bg) 45%, transparent);
     border:1px solid color-mix(in srgb, var(--ink) 12%, transparent);
@@ -418,6 +429,7 @@
 
 
 <section class="hero">
+  <canvas class="hero-comets" id="heroComets" aria-hidden="true"></canvas>
   <svg viewBox="0 0 60 74" width="50" style="display:block;margin:0 auto 2rem;" role="img" aria-label="Icône PRISM" color="white">
     <g stroke="var(--ink)" fill="none" stroke-linecap="round" stroke-linejoin="round">
       <polygon points="30,3 3,57 57,57" stroke-width="2"/>
@@ -732,6 +744,96 @@
   }
   function toggleMenu(){ document.getElementById('mobileMenu').classList.toggle('open'); }
   function closeMenu(){ document.getElementById('mobileMenu').classList.remove('open'); }
+
+  // ===== Comètes animées dans le hero =====
+  (function(){
+    var canvas = document.getElementById('heroComets');
+    if(!canvas) return;
+    var reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(reduceMotion) return;
+
+    var ctx = canvas.getContext('2d');
+    var hero = canvas.parentElement;
+    var comets = [];
+    var W = 0, H = 0, DPR = 1;
+    var running = true;
+
+    function resize(){
+      var rect = hero.getBoundingClientRect();
+      DPR = Math.min(window.devicePixelRatio || 1, 2);
+      W = rect.width; H = rect.height;
+      canvas.width = Math.max(1, W * DPR);
+      canvas.height = Math.max(1, H * DPR);
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    function spawnComet(){
+      var angle = (Math.random() * 26 + 18) * Math.PI / 180; // descend vers la droite
+      var fromLeft = Math.random() < 0.65;
+      var startX, startY;
+      if(fromLeft){ startX = -60; startY = Math.random() * H * 0.7; }
+      else { startX = Math.random() * W; startY = -60; }
+      var speed = Math.random() * 3.2 + 2.6;
+      comets.push({
+        x: startX, y: startY,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        len: Math.random() * 100 + 70,
+        size: Math.random() * 1.1 + 0.7,
+        opacity: Math.random() * 0.45 + 0.45
+      });
+    }
+
+    var lastSpawn = 0;
+    var nextGap = 700;
+
+    function loop(t){
+      if(!running){ requestAnimationFrame(loop); return; }
+      ctx.clearRect(0, 0, W, H);
+
+      if(t - lastSpawn > nextGap){
+        spawnComet();
+        lastSpawn = t;
+        nextGap = 900 + Math.random() * 1600;
+      }
+
+      for(var i = comets.length - 1; i >= 0; i--){
+        var c = comets[i];
+        c.x += c.vx; c.y += c.vy;
+        var mag = Math.hypot(c.vx, c.vy) || 1;
+        var tailX = c.x - (c.vx / mag) * c.len;
+        var tailY = c.y - (c.vy / mag) * c.len;
+
+        var grad = ctx.createLinearGradient(c.x, c.y, tailX, tailY);
+        grad.addColorStop(0, 'rgba(255,255,255,' + c.opacity + ')');
+        grad.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = c.size;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(c.x, c.y);
+        ctx.lineTo(tailX, tailY);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.fillStyle = 'rgba(255,255,255,' + Math.min(c.opacity + 0.25, 1) + ')';
+        ctx.arc(c.x, c.y, c.size * 1.4, 0, Math.PI * 2);
+        ctx.fill();
+
+        if(c.x > W + 100 || c.y > H + 100){
+          comets.splice(i, 1);
+        }
+      }
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+
+    document.addEventListener('visibilitychange', function(){
+      running = !document.hidden;
+    });
+  })();
 
   // ===== Roue de compatibilité jeux =====
   (function(){
