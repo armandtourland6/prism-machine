@@ -1,13 +1,11 @@
 #!/bin/bash
-echo "🔧 Configuration de l'affichage : 1080p 60Hz (Format Usine)..."
+echo "🔧 Configuration : 1080p 60Hz + Fixes AMD..."
 
-# Nettoyage des anciens kargs video pour éviter les conflits
 sudo rpm-ostree kargs --delete-if-present="video="
+sudo rpm-ostree kargs --delete-if-present="amd_iommu="
+sudo rpm-ostree kargs --delete-if-present="nomodeset"
 
-# Injection de la nouvelle configuration propre (Universelle + HDMI AMD)
-sudo rpm-ostree kargs --append="video=1920x1080@60e" --append="video=HDMI-A-1:1920x1080@60"
+sudo rpm-ostree kargs --append="amd_iommu=off" --append="nomodeset" --append="video=1920x1080@60e" --append="video=HDMI-A-1:1920x1080@60"
 
-echo "✅ Résolution 1080p 16:9 configurée avec succès !"
-echo "🔄 Redémarrage de la Prism Machine dans 3 secondes..."
-sleep 3
-sudo systemctl reboot
+echo "✅ Fait !"
+sleep 2 && sudo systemctl reboot
