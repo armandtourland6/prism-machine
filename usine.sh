@@ -1,12 +1,9 @@
 #!/bin/bash
-echo "🔧 Réinitialisation de la console aux paramètres d'usine (1080p 60Hz)..."
 OLD_VIDEO=$(rpm-ostree kargs | tr ' ' '\n' | grep '^video=')
-
-if [ ! -z "$OLD_VIDEO" ]; then
-    sudo rpm-ostree kargs --replace="$OLD_VIDEO=video=1920x1080@60"
-else
-    sudo rpm-ostree kargs --append="video=1920x1080@60"
+# On force le 1080p@60 avec le 'e' pour activer la sortie en 16:9
+if [ ! -z "$OLD_VIDEO" ]; then 
+    sudo rpm-ostree kargs --replace="$OLD_VIDEO=video=1920x1080@60e"
+else 
+    sudo rpm-ostree kargs --append="video=1920x1080@60e"
 fi
-echo "✅ Fait ! Redémarrage dans 5 secondes..."
-sleep 5
-sudo systemctl reboot
+echo "✅ Résolution 1080p 16:9 forcée. Redémarrage..." && sleep 2 && sudo systemctl reboot
