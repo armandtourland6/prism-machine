@@ -174,11 +174,32 @@
   .submit-btn, .model-card { transition: transform .25s ease, background-color .25s ease, box-shadow .25s ease; }
   .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 28px color-mix(in srgb, var(--ink) 22%, transparent); }
   .model-card:hover { background: color-mix(in srgb, var(--ink) 5%, transparent); }
+
+  /* ================= VFX : barre de progression au scroll ================= */
+  .scroll-progress{
+    position:fixed; top:0; left:0; height:3px; width:0%;
+    background: linear-gradient(90deg, #4dabf7, #845ef7, #ff6b6b, #ffd43b, #51cf66);
+    z-index:200; border-radius:0 3px 3px 0;
+    box-shadow: 0 0 8px rgba(132,94,247,0.5);
+  }
+  .model-card{ will-change: transform; }
+
+  /* ================= VFX : reveal au scroll + shine bouton ================= */
+  .reveal{ opacity:0; transform:translateY(28px); transition:opacity .9s cubic-bezier(.22,1,.36,1), transform .9s cubic-bezier(.22,1,.36,1); }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+  .submit-btn{ position:relative; overflow:hidden; isolation:isolate; }
+  .submit-btn::after{
+    content:''; position:absolute; top:0; left:-80%; width:45%; height:100%;
+    background: linear-gradient(115deg, transparent, rgba(255,255,255,0.5), transparent);
+    transform: skewX(-20deg); transition:left .65s cubic-bezier(.22,1,.36,1); pointer-events:none; z-index:1;
+  }
+  .submit-btn:hover::after{ left:130%; }
   .field input, .field select, .field textarea { transition: border-color .2s ease, box-shadow .2s ease; }
   .field input:focus, .field select:focus, .field textarea:focus { box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 10%, transparent); }
 </style>
 </head>
 <body>
+<div class="scroll-progress" id="scrollProgress"></div>
 
 <nav>
   <a class="nav-logo" href="index.html">
@@ -213,7 +234,7 @@
     <h1 class="info-title">Votre PRISM, à votre image.</h1>
     <p class="info-desc">Remplissez le formulaire, nous vous recontactons sous 48h pour confirmer les détails, le délai et le paiement.</p>
     <span class="fr-badge"><span class="fr-flag"></span>Fabriquée à la main en France</span>
-    <div class="info-steps">
+    <div class="info-steps reveal">
       <div class="info-step">
         <div class="step-num">01</div>
         <div class="step-text">
@@ -246,7 +267,7 @@
   </div>
 
   <!-- FORM -->
-  <div class="form-wrap">
+  <div class="form-wrap reveal">
     <div class="form-header">
       <div class="form-header-label">Formulaire de commande</div>
       <h2>Configurer votre PRISM</h2>
@@ -382,6 +403,76 @@
     root.setAttribute('data-theme', next);
     try{ localStorage.setItem('prism-theme', next); }catch(e){}
   }
+
+  // ===== VFX : barre de progression au scroll =====
+  (function(){
+    var bar = document.getElementById('scrollProgress');
+    if(!bar) return;
+    function update(){
+      var h = document.documentElement;
+      var scrollTop = h.scrollTop || document.body.scrollTop;
+      var scrollHeight = (h.scrollHeight || document.body.scrollHeight) - h.clientHeight;
+      var progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+      bar.style.width = progress + '%';
+    }
+    window.addEventListener('scroll', update, {passive:true});
+    update();
+  })();
+
+  // ===== VFX : tilt 3D sur les cartes modèles =====
+  (function(){
+    var reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(reduceMotion) return;
+    document.querySelectorAll('.model-card').forEach(function(card){
+      card.addEventListener('mousemove', function(e){
+        var r = card.getBoundingClientRect();
+        var x = (e.clientX - r.left) / r.width - 0.5;
+        var y = (e.clientY - r.top) / r.height - 0.5;
+        card.style.transition = 'none';
+        card.style.transform = 'perspective(700px) rotateX(' + (-y * 5) + 'deg) rotateY(' + (x * 5) + 'deg)';
+      });
+      card.addEventListener('mouseleave', function(){
+        card.style.transition = 'transform .5s cubic-bezier(.22,1,.36,1)';
+        card.style.transform = 'perspective(700px) rotateX(0) rotateY(0)';
+      });
+    });
+  })();
+
+  // ===== VFX : explosion de particules au clic sur le CTA =====
+  (function(){
+    var reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(reduceMotion) return;
+    var colors = ['#4dabf7', '#845ef7', '#ff6b6b', '#ffd43b', '#51cf66'];
+    function burst(x, y){
+      for(var i = 0; i < 16; i++){
+        var p = document.createElement('span');
+        p.style.cssText = 'position:fixed;left:' + x + 'px;top:' + y + 'px;width:6px;height:6px;border-radius:50%;pointer-events:none;z-index:9999;background:' + colors[i % colors.length];
+        document.body.appendChild(p);
+        var angle = Math.random() * Math.PI * 2;
+        var dist = Math.random() * 70 + 40;
+        var dx = Math.cos(angle) * dist, dy = Math.sin(angle) * dist;
+        var anim = p.animate([
+          { transform: 'translate(0,0) scale(1)', opacity: 1 },
+          { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(0)', opacity: 0 }
+        ], { duration: 650 + Math.random() * 400, easing: 'cubic-bezier(.22,1,.36,1)' });
+        anim.onfinish = function(el){ return function(){ el.remove(); }; }(p);
+      }
+    }
+    document.querySelectorAll('.submit-btn').forEach(function(btn){
+      btn.addEventListener('click', function(e){ burst(e.clientX, e.clientY); });
+    });
+  })();
+
+  // ===== VFX : reveal au scroll =====
+  (function(){
+    var els = document.querySelectorAll('.reveal');
+    if(!els.length) return;
+    if(!('IntersectionObserver' in window)){ els.forEach(function(el){ el.classList.add('in'); }); return; }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, {threshold:0.12, rootMargin:'0px 0px -60px 0px'});
+    els.forEach(function(el){ io.observe(el); });
+  })();
 
   // Model card toggle
   function selectModel(m) {

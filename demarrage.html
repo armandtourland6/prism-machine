@@ -171,9 +171,18 @@
     nav { top: 0.5rem; left: 0.6rem; right: 0.6rem; border-radius: 16px; padding: 0.75rem 1rem; }
     .theme-toggle { width: 40px; height: 40px; margin-left: 0.6rem; }
   }
+  /* ================= VFX : barre de progression au scroll ================= */
+  .scroll-progress{
+    position:fixed; top:0; left:0; height:3px; width:0%;
+    background: linear-gradient(90deg, #4dabf7, #845ef7, #ff6b6b, #ffd43b, #51cf66);
+    z-index:200; border-radius:0 3px 3px 0;
+    box-shadow: 0 0 8px rgba(132,94,247,0.5);
+  }
+  .res-card{ will-change: transform; }
 </style>
 </head>
 <body>
+<div class="scroll-progress" id="scrollProgress"></div>
 
 <nav>
   <a class="nav-logo" href="index.html">
@@ -395,6 +404,40 @@
       fallbackCopy(); done();
     }
   }
+
+  // ===== VFX : barre de progression au scroll =====
+  (function(){
+    var bar = document.getElementById('scrollProgress');
+    if(!bar) return;
+    function update(){
+      var h = document.documentElement;
+      var scrollTop = h.scrollTop || document.body.scrollTop;
+      var scrollHeight = (h.scrollHeight || document.body.scrollHeight) - h.clientHeight;
+      var progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+      bar.style.width = progress + '%';
+    }
+    window.addEventListener('scroll', update, {passive:true});
+    update();
+  })();
+
+  // ===== VFX : tilt 3D sur les cartes de résolution =====
+  (function(){
+    var reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(reduceMotion) return;
+    document.querySelectorAll('.res-card').forEach(function(card){
+      card.addEventListener('mousemove', function(e){
+        var r = card.getBoundingClientRect();
+        var x = (e.clientX - r.left) / r.width - 0.5;
+        var y = (e.clientY - r.top) / r.height - 0.5;
+        card.style.transition = 'none';
+        card.style.transform = 'perspective(700px) rotateX(' + (-y * 4) + 'deg) rotateY(' + (x * 4) + 'deg)';
+      });
+      card.addEventListener('mouseleave', function(){
+        card.style.transition = 'transform .5s cubic-bezier(.22,1,.36,1)';
+        card.style.transform = 'perspective(700px) rotateX(0) rotateY(0)';
+      });
+    });
+  })();
 </script>
 
 </body>
