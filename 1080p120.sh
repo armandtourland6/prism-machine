@@ -1,12 +1,10 @@
 #!/bin/bash
-echo "🔧 Configuration en 1080p 120Hz..."
-OLD_VIDEO=$(rpm-ostree kargs | tr ' ' '\n' | grep '^video=')
+echo "🔧 Configuration : 1080p 120Hz + Fixes AMD..."
 
-if [ ! -z "$OLD_VIDEO" ]; then
-    sudo rpm-ostree kargs --replace="$OLD_VIDEO=video=1920x1080@120"
-else
-    sudo rpm-ostree kargs --append="video=1920x1080@120"
-fi
-echo "✅ Fait ! Redémarrage dans 5 secondes..."
-sleep 5
-sudo systemctl reboot
+sudo rpm-ostree kargs --delete-if-present="video="
+sudo rpm-ostree kargs --delete-if-present="amd_iommu="
+sudo rpm-ostree kargs --delete-if-present="nomodeset"
+
+sudo rpm-ostree kargs --append="amd_iommu=off" --append="nomodeset" --append="video=1920x1080@120e" --append="video=HDMI-A-1:1920x1080@120"
+
+sleep 2 && sudo systemctl reboot
