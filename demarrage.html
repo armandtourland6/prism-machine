@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+(function(){
+  try{
+    var t = localStorage.getItem('prism-theme');
+    if(!t){ t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+    document.documentElement.setAttribute('data-theme', t);
+  }catch(e){}
+})();
+</script>
+<title>Mise en route — PRISM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@300;400;500&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><polygon points='16,2 2,30 30,30' fill='none' stroke='%23111110' stroke-width='2' stroke-linejoin='round'/><line x1='16' y1='2' x2='16' y2='30' stroke='%23111110' stroke-width='1.2'/><line x1='8' y1='19' x2='24' y2='19' stroke='%23111110' stroke-width='1.2'/><line x1='2' y1='30' x2='24' y2='19' stroke='%23111110' stroke-width='1.2'/><line x1='30' y1='30' x2='8' y2='19' stroke='%23111110' stroke-width='1.2'/></svg>">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{--bg:#fafaf8;--ink:#111110;--muted:#999994;--faint:#e8e8e4;--purple:#845ef7}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:'Instrument Sans',sans-serif;font-weight:300;line-height:1.6;min-height:100vh}
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.4rem 3rem;background:rgba(250,250,248,0.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--faint)}
+  .nav-logo{display:flex;align-items:center;text-decoration:none}
+  .nav-back{font-size:0.75rem;color:var(--muted);text-decoration:none;letter-spacing:0.06em;border-bottom:1px solid var(--faint);padding-bottom:1px;transition:color 0.2s}
+  .nav-back:hover{color:var(--ink);border-color:var(--ink)}
+
+  .page{max-width:900px;margin:0 auto;padding:9rem 3rem 6rem}
+
+  .label{font-size:0.65rem;letter-spacing:0.25em;color:var(--muted);text-transform:uppercase;margin-bottom:1.5rem}
+  h1.title{font-family:'Instrument Serif',serif;font-size:clamp(2.2rem,5vw,3.4rem);font-weight:400;font-style:italic;letter-spacing:-0.01em;line-height:1.15;margin-bottom:1.5rem}
+  .lead{font-size:0.95rem;color:var(--muted);line-height:1.75;max-width:620px;margin-bottom:3.5rem}
+
+  /* STEPS OVERVIEW */
+  .steps{display:grid;grid-template-columns:repeat(5,1fr);border:1px solid var(--faint);margin-bottom:6rem}
+  .step{padding:1.75rem 1.25rem;border-right:1px solid var(--faint);text-align:center}
+  .step:last-child{border-right:none}
+  .step-icon{width:34px;height:34px;margin:0 auto 1rem;display:flex;align-items:center;justify-content:center;border-radius:50%;border:1px solid var(--faint);font-size:0.75rem;letter-spacing:0.05em;color:var(--muted)}
+  .step.active .step-icon{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+  .step h4{font-size:0.78rem;font-weight:500;margin-bottom:0.3rem}
+  .step p{font-size:0.7rem;color:var(--muted);line-height:1.4}
+
+  section.block{margin-bottom:5rem}
+  .block-title{font-family:'Instrument Serif',serif;font-size:clamp(1.6rem,3vw,2.2rem);font-style:italic;font-weight:400;margin-bottom:1rem}
+  .block-desc{font-size:0.875rem;color:var(--muted);line-height:1.75;max-width:640px;margin-bottom:2.5rem}
+
+  /* SIMPLE CHECKLIST BLOCKS (unpacking / wifi / play) */
+  .simple-list{border:1px solid var(--faint);display:flex;flex-direction:column}
+  .simple-item{padding:1.25rem 1.5rem;border-bottom:1px solid var(--faint);display:flex;gap:1rem;align-items:flex-start}
+  .simple-item:last-child{border-bottom:none}
+  .simple-num{font-size:0.65rem;letter-spacing:0.15em;color:var(--muted);flex-shrink:0;padding-top:0.15rem}
+  .simple-item h4{font-size:0.85rem;font-weight:500;margin-bottom:0.2rem}
+  .simple-item p{font-size:0.78rem;color:var(--muted);line-height:1.5}
+
+  /* RESOLUTION CARDS */
+  .res-note{border:1px solid var(--faint);padding:1.25rem 1.5rem;font-size:0.8rem;color:var(--muted);line-height:1.7;margin-bottom:2.5rem;display:flex;gap:0.9rem;align-items:flex-start}
+  .res-note svg{flex-shrink:0;margin-top:0.15rem}
+  .res-note strong{color:var(--ink);font-weight:500}
+
+  .res-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+  .res-card{border:1px solid var(--faint);padding:1.75rem;display:flex;flex-direction:column;gap:0.9rem}
+  .res-card.featured{border-color:var(--ink)}
+  .res-card-head{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+  .res-card-head h3{font-size:1rem;font-weight:500;letter-spacing:-0.01em}
+  .res-tag{font-size:0.65rem;letter-spacing:0.08em;color:var(--muted);border:1px solid var(--faint);padding:0.2rem 0.6rem;border-radius:100px;white-space:nowrap}
+  .res-card.featured .res-tag{border-color:var(--ink);color:var(--ink)}
+  .res-desc{font-size:0.78rem;color:var(--muted);line-height:1.55;flex-grow:1}
+
+  .code-block{
+    background:#111110;color:#fafaf8;border-radius:10px;
+    padding:0.9rem 0.75rem 0.9rem 1rem;
+    display:flex;align-items:center;gap:0.75rem;
+    font-family:'JetBrains Mono',monospace;
+  }
+  .code-block code{
+    flex:1;font-size:0.72rem;line-height:1.5;color:#e8e8e4;
+    white-space:nowrap;overflow-x:auto;
+  }
+  .code-block code::-webkit-scrollbar{height:0}
+  .code-block .cmd-prefix{color:#7dd3a0}
+  .copy-btn{
+    flex-shrink:0;width:32px;height:32px;border-radius:7px;border:none;cursor:pointer;
+    background:rgba(255,255,255,0.08);color:#fafaf8;
+    display:flex;align-items:center;justify-content:center;
+    transition:background-color .2s ease, transform .2s ease;
+  }
+  .copy-btn:hover{background:rgba(255,255,255,0.16)}
+  .copy-btn:active{transform:scale(0.92)}
+  .copy-btn.copied{background:#4a9d6f}
+  .copy-btn svg{width:15px;height:15px}
+  .copy-btn .icon-check{display:none}
+  .copy-btn.copied .icon-copy{display:none}
+  .copy-btn.copied .icon-check{display:block}
+
+  /* Terminal help */
+  .terminal-help{margin-top:3rem;border:1px solid var(--faint);padding:1.75rem;}
+  .terminal-help h4{font-size:0.85rem;font-weight:500;margin-bottom:0.6rem}
+  .terminal-help p{font-size:0.8rem;color:var(--muted);line-height:1.7}
+  .terminal-help p + p{margin-top:0.6rem}
+  .terminal-help kbd{font-family:'JetBrains Mono',monospace;font-size:0.72rem;background:var(--faint);padding:0.15rem 0.4rem;border-radius:4px}
+
+  footer{border-top:1px solid var(--faint);padding:2rem 3rem;display:flex;justify-content:space-between;align-items:center}
+  .footer-copy{font-size:0.7rem;color:var(--muted)}
+
+  @media (max-width: 900px){
+    .steps{grid-template-columns:1fr 1fr;}
+    .step{border-right:1px solid var(--faint);border-bottom:1px solid var(--faint)}
+    .step:nth-child(2n){border-right:none}
+    .res-grid{grid-template-columns:1fr}
+  }
+  @media (max-width: 768px){
+    nav{padding:1rem 1.5rem}
+    .page{padding:7rem 1.5rem 4rem}
+    footer{flex-direction:column;gap:0.5rem}
+    .code-block{align-items:flex-start;padding:1rem}
+    .code-block code{white-space:normal;word-break:break-all;overflow-x:visible;font-size:0.7rem}
+    .copy-btn{margin-top:0.1rem}
+  }
+
+  /* ================= THÈME SOMBRE / CLAIR + LIQUID GLASS ================= */
+  [data-theme="dark"] {
+    --bg: #0c0c0d;
+    --ink: #f1f1ec;
+    --muted: #93938d;
+    --faint: #29292b;
+  }
+  html, body { transition: background-color .4s ease, color .4s ease; }
+  nav, .theme-toggle, .steps, .simple-list, .res-note, .res-card, .terminal-help {
+    transition: background-color .4s ease, border-color .4s ease, box-shadow .4s ease;
+  }
+
+  .theme-toggle {
+    width: 38px; height: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: color-mix(in srgb, var(--bg) 45%, transparent);
+    border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+    -webkit-backdrop-filter: blur(14px) saturate(1.6);
+    backdrop-filter: blur(14px) saturate(1.6);
+    box-shadow: 0 4px 18px color-mix(in srgb, var(--ink) 10%, transparent), inset 0 1px 0 color-mix(in srgb, #fff 35%, transparent);
+    color: var(--ink); cursor: pointer; flex-shrink: 0; margin-left: 1.25rem;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .theme-toggle:hover { transform: scale(1.07); }
+  .theme-toggle .icon-moon { display: none; }
+  [data-theme="dark"] .theme-toggle .icon-sun { display: none; }
+  [data-theme="dark"] .theme-toggle .icon-moon { display: block; }
+
+  nav {
+    background: color-mix(in srgb, var(--bg) 65%, transparent) !important;
+    -webkit-backdrop-filter: blur(22px) saturate(1.6);
+    backdrop-filter: blur(22px) saturate(1.6);
+    border: 1px solid color-mix(in srgb, var(--ink) 8%, transparent) !important;
+    top: 0.85rem; left: 1.25rem; right: 1.25rem;
+    border-radius: 18px;
+    box-shadow: 0 8px 30px color-mix(in srgb, var(--ink) 8%, transparent);
+  }
+
+  .steps, .simple-list, .res-note, .res-card, .terminal-help {
+    background: color-mix(in srgb, var(--bg) 55%, transparent) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+    backdrop-filter: blur(18px) saturate(1.4);
+    border-radius: 16px !important;
+    overflow: hidden;
+  }
+  .steps, .simple-list { box-shadow: 0 10px 40px color-mix(in srgb, var(--ink) 6%, transparent); }
+  .res-card:hover { background: color-mix(in srgb, var(--ink) 4%, transparent) !important; }
+
+  @media (max-width: 768px) {
+    nav { top: 0.5rem; left: 0.6rem; right: 0.6rem; border-radius: 16px; padding: 0.75rem 1rem; }
+    .theme-toggle { width: 40px; height: 40px; margin-left: 0.6rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">
+    <svg viewBox="0 0 115 24" height="18">
+      <g stroke="var(--ink)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="12,1 2,23 22,23" stroke-width="1.6"/>
+        <line x1="12" y1="1" x2="12" y2="23" stroke-width="1"/>
+        <line x1="6" y1="14" x2="18" y2="14" stroke-width="1"/>
+        <line x1="2" y1="23" x2="18" y2="14" stroke-width="1"/>
+        <line x1="22" y1="23" x2="6" y2="14" stroke-width="1"/>
+      </g>
+      <line x1="12" y1="23" x2="8.5" y2="28" stroke="#845ef7" stroke-width="1" stroke-linecap="round"/>
+      <line x1="12" y1="23" x2="10" y2="28" stroke="#4dabf7" stroke-width="1" stroke-linecap="round"/>
+      <line x1="12" y1="23" x2="12" y2="28" stroke="#51cf66" stroke-width="1" stroke-linecap="round"/>
+      <line x1="12" y1="23" x2="14" y2="28" stroke="#ffd43b" stroke-width="1" stroke-linecap="round"/>
+      <line x1="12" y1="23" x2="16" y2="28" stroke="#ff6b6b" stroke-width="1" stroke-linecap="round"/>
+      <text x="30" y="17" font-family="-apple-system,sans-serif" font-size="14" font-weight="600" fill="var(--ink)" letter-spacing="2">PRISM</text>
+    </svg>
+  </a>
+  <a href="index.html" class="nav-back">← Accueil</a>
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Basculer mode sombre / clair" title="Mode sombre / clair">
+    <svg class="icon-sun" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.2"/><line x1="12" y1="1.5" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22.5"/><line x1="3.5" y1="12" x2="1" y2="12"/><line x1="23" y1="12" x2="20.5" y2="12"/><line x1="5" y1="5" x2="6.8" y2="6.8"/><line x1="17.2" y1="17.2" x2="19" y2="19"/><line x1="19" y1="5" x2="17.2" y2="6.8"/><line x1="6.8" y1="17.2" x2="5" y2="19"/></svg>
+    <svg class="icon-moon" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"/></svg>
+  </button>
+</nav>
+
+<div class="page">
+
+  <div class="label">Guide de démarrage</div>
+  <h1 class="title">Votre PRISM, prête en quelques minutes.</h1>
+  <p class="lead">Déballage, premier allumage, réseau et réglage de l'écran — tout ce qu'il faut pour être prêt à jouer. Comptez 10 minutes.</p>
+
+  <!-- STEP 1-3 quick recap -->
+  <section class="block">
+    <div class="block-title">Avant l'écran.</div>
+    <p class="block-desc">Les bases pour sortir votre PRISM de sa boîte et la connecter.</p>
+    <div class="simple-list">
+      <div class="simple-item">
+        <div class="simple-num">01</div>
+        <div class="step-text">
+          <h4>Branchement & premier allumage</h4>
+          <p>Reliez la PRISM à votre écran ou TV en HDMI, branchez l'alimentation, puis appuyez sur le bouton d'allumage. Bazzite démarre automatiquement en mode Steam.</p>
+        </div>
+      </div>
+      <div class="simple-item">
+        <div class="simple-num">02</div>
+        <div class="step-text">
+          <h4>Connexion réseau</h4>
+          <p>Depuis le menu Steam, ouvrez <em>Paramètres → Réseau</em> pour rejoindre votre Wi-Fi, ou branchez simplement un câble Ethernet — aucune configuration nécessaire.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ECRAN -->
+  <section class="block" id="ecran">
+    <div class="label">Étape 3</div>
+    <div class="block-title">Écran — résolution & fréquence.</div>
+    <p class="block-desc">Votre PRISM est livrée réglée en 1080p 60Hz. Si votre écran ou TV supporte mieux, changez de profil en une seule ligne de commande — nos scripts appliquent automatiquement la bonne configuration.</p>
+
+    <div class="res-note">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <div>Ouvrez un terminal depuis le mode Bureau de Bazzite (<strong>Steam → Alimentation → Passer en mode Bureau</strong>, puis lancez Konsole), collez la ligne correspondant à votre écran, validez avec <strong>Entrée</strong>, puis redémarrez la console.</div>
+    </div>
+
+    <div class="res-grid">
+
+      <div class="res-card featured">
+        <div class="res-card-head">
+          <h3>Réglage usine</h3>
+          <span class="res-tag">1080p · 60Hz</span>
+        </div>
+        <p class="res-desc">Le réglage par défaut. Revenez ici si un profil pose problème.</p>
+        <div class="code-block">
+          <code><span class="cmd-prefix">curl</span> -s https://prism-machine.fr/usine.sh | bash</code>
+          <button class="copy-btn" onclick="copyCmd(this)" data-cmd="curl -s https://prism-machine.fr/usine.sh | bash" aria-label="Copier la commande">
+            <svg class="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg>
+            <svg class="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="res-card">
+        <div class="res-card-head">
+          <h3>Fluide</h3>
+          <span class="res-tag">1080p · 120Hz</span>
+        </div>
+        <p class="res-desc">Pour un écran 120Hz — les jeux compétitifs (Valorant, CS2) gagnent en fluidité.</p>
+        <div class="code-block">
+          <code><span class="cmd-prefix">curl</span> -s https://prism-machine.fr/1080p120.sh | bash</code>
+          <button class="copy-btn" onclick="copyCmd(this)" data-cmd="curl -s https://prism-machine.fr/1080p120.sh | bash" aria-label="Copier la commande">
+            <svg class="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg>
+            <svg class="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="res-card">
+        <div class="res-card-head">
+          <h3>Netteté</h3>
+          <span class="res-tag">2K · 60Hz</span>
+        </div>
+        <p class="res-desc">Plus de définition sur un moniteur 1440p, en gardant une bonne compatibilité FPS.</p>
+        <div class="code-block">
+          <code><span class="cmd-prefix">curl</span> -s https://prism-machine.fr/2k60.sh | bash</code>
+          <button class="copy-btn" onclick="copyCmd(this)" data-cmd="curl -s https://prism-machine.fr/2k60.sh | bash" aria-label="Copier la commande">
+            <svg class="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg>
+            <svg class="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="res-card">
+        <div class="res-card-head">
+          <h3>Performance</h3>
+          <span class="res-tag">2K · 144Hz</span>
+        </div>
+        <p class="res-desc">Le meilleur des deux mondes pour un écran 1440p 144Hz — netteté et réactivité.</p>
+        <div class="code-block">
+          <code><span class="cmd-prefix">curl</span> -s https://prism-machine.fr/2k144.sh | bash</code>
+          <button class="copy-btn" onclick="copyCmd(this)" data-cmd="curl -s https://prism-machine.fr/2k144.sh | bash" aria-label="Copier la commande">
+            <svg class="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg>
+            <svg class="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="res-card">
+        <div class="res-card-head">
+          <h3>Cinéma</h3>
+          <span class="res-tag">4K · 60Hz</span>
+        </div>
+        <p class="res-desc">Idéal branché sur une TV 4K pour les jeux solo type Elden Ring ou Cyberpunk 2077.</p>
+        <div class="code-block">
+          <code><span class="cmd-prefix">curl</span> -s https://prism-machine.fr/4k60.sh | bash</code>
+          <button class="copy-btn" onclick="copyCmd(this)" data-cmd="curl -s https://prism-machine.fr/4k60.sh | bash" aria-label="Copier la commande">
+            <svg class="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg>
+            <svg class="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="res-card">
+        <div class="res-card-head">
+          <h3>Maximum</h3>
+          <span class="res-tag">4K · 120Hz</span>
+        </div>
+        <p class="res-desc">Pour les TV et moniteurs 4K 120Hz haut de gamme. Demande le plus de puissance.</p>
+        <div class="code-block">
+          <code><span class="cmd-prefix">curl</span> -s https://prism-machine.fr/4k120.sh | bash</code>
+          <button class="copy-btn" onclick="copyCmd(this)" data-cmd="curl -s https://prism-machine.fr/4k120.sh | bash" aria-label="Copier la commande">
+            <svg class="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg>
+            <svg class="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="terminal-help">
+      <h4>Besoin d'aide avec le terminal ?</h4>
+      <p>Depuis Steam, allez dans <kbd>Steam</kbd> → <kbd>Alimentation</kbd> → <kbd>Passer en mode Bureau</kbd>. Une fois sur le Bureau, ouvrez <kbd>Konsole</kbd> (icône terminal dans la barre des tâches), collez la commande avec <kbd>Ctrl+Maj+V</kbd>, puis appuyez sur <kbd>Entrée</kbd>.</p>
+      <p>Un doute sur le script à lancer ? Revenez au réglage usine à tout moment avec la première commande — c'est sans risque.</p>
+    </div>
+  </section>
+
+  <!-- STEP 5 -->
+  <section class="block">
+    <div class="block-title">Prêt à jouer.</div>
+    <p class="block-desc">Une fois l'écran réglé, redémarrez la console. Steam se relance automatiquement dans la nouvelle résolution — votre bibliothèque vous attend.</p>
+    <a href="index.html#compat" class="nav-back" style="font-size:0.8rem;">Voir la compatibilité des jeux populaires →</a>
+  </section>
+
+</div>
+
+<footer>
+  <a href="index.html" style="text-decoration:none">
+    <svg viewBox="0 0 115 24" height="16">
+      <g stroke="var(--ink)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="12,1 2,23 22,23" stroke-width="1.6"/>
+        <line x1="12" y1="1" x2="12" y2="23" stroke-width="1"/>
+        <line x1="6" y1="14" x2="18" y2="14" stroke-width="1"/>
+        <line x1="2" y1="23" x2="18" y2="14" stroke-width="1"/>
+        <line x1="22" y1="23" x2="6" y2="14" stroke-width="1"/>
+      </g>
+      <text x="30" y="17" font-family="-apple-system,sans-serif" font-size="14" font-weight="600" fill="var(--ink)" letter-spacing="2">PRISM</text>
+    </svg>
+  </a>
+  <div class="footer-copy" style="display:flex;align-items:center;gap:0.5rem;"><span class="fr-flag" style="width:15px;height:11px;border-radius:2px;display:inline-block;background:linear-gradient(90deg,#0055A4 0 33.3%,#fff 33.3% 66.6%,#EF4135 66.6% 100%);box-shadow:0 0 0 1px rgba(0,0,0,0.1);"></span>© 2026 PRISM — Fabriquée avec soin en France</div>
+</footer>
+
+<script>
+  function toggleTheme(){
+    var root = document.documentElement;
+    var next = (root.getAttribute('data-theme') === 'dark') ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try{ localStorage.setItem('prism-theme', next); }catch(e){}
+  }
+
+  function copyCmd(btn){
+    var cmd = btn.getAttribute('data-cmd');
+    function fallbackCopy(){
+      var ta = document.createElement('textarea');
+      ta.value = cmd;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try{ document.execCommand('copy'); }catch(e){}
+      document.body.removeChild(ta);
+    }
+    var done = function(){
+      btn.classList.add('copied');
+      setTimeout(function(){ btn.classList.remove('copied'); }, 1600);
+    };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(cmd).then(done, function(){ fallbackCopy(); done(); });
+    } else {
+      fallbackCopy(); done();
+    }
+  }
+</script>
+
+</body>
+</html>
