@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+(function(){
+  try{
+    var t = localStorage.getItem('prism-theme');
+    if(!t){ t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+    document.documentElement.setAttribute('data-theme', t);
+  }catch(e){}
+})();
+</script>
+<title>Mon compte — PRISM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{--bg:#fafaf8;--ink:#111110;--muted:#999994;--faint:#e8e8e4;--purple:#845ef7}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:'Instrument Sans',sans-serif;font-weight:300;line-height:1.6;min-height:100vh}
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.4rem 3rem;background:rgba(250,250,248,0.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--faint)}
+  .nav-logo{display:flex;align-items:center;text-decoration:none}
+  .nav-right{display:flex;align-items:center;gap:1.25rem}
+  .logout-btn{font-size:0.75rem;color:var(--muted);text-decoration:none;letter-spacing:0.06em;border-bottom:1px solid var(--faint);padding-bottom:1px;transition:color 0.2s;background:none;border:none;cursor:pointer;font-family:'Instrument Sans',sans-serif}
+  .logout-btn:hover{color:var(--ink);border-color:var(--ink)}
+
+  .page{max-width:900px;margin:0 auto;padding:9rem 3rem 6rem}
+  .label{font-size:0.65rem;letter-spacing:0.25em;color:var(--muted);text-transform:uppercase;margin-bottom:1rem}
+  h1.title{font-family:'Instrument Serif',serif;font-size:clamp(1.8rem,4vw,2.6rem);font-weight:400;font-style:italic;margin-bottom:2.5rem}
+
+  .block{margin-bottom:3.5rem}
+  .block-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
+  .block-title{font-size:1rem;font-weight:500}
+
+  .card{border:1px solid var(--faint);padding:2rem}
+
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+  .field label{display:block;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:0.5rem}
+  .field input{width:100%;padding:0.8rem 0.9rem;border:1px solid var(--faint);background:transparent;color:var(--ink);font-family:'Instrument Sans',sans-serif;font-size:0.9rem;border-radius:10px}
+  .field input:focus{outline:none;border-color:var(--ink)}
+  .field input:disabled{color:var(--muted)}
+
+  .save-btn{background:var(--ink);color:var(--bg);padding:0.85rem 1.75rem;font-size:0.8rem;letter-spacing:0.08em;border:none;cursor:pointer;border-radius:12px;font-family:'Instrument Sans',sans-serif;transition:opacity .2s, transform .2s}
+  .save-btn:hover{opacity:0.85;transform:translateY(-2px)}
+
+  .msg{font-size:0.78rem;padding:0.7rem 1rem;border-radius:10px;margin-top:1rem;display:none}
+  .msg.show{display:block}
+  .msg.success{background:rgba(81,207,102,0.12);color:#2f9e44}
+  .msg.error{background:rgba(255,107,107,0.12);color:#c92a2a}
+
+  .order-item{border:1px solid var(--faint);padding:1.5rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:1rem}
+  .order-item:last-child{margin-bottom:0}
+  .order-model{font-weight:500;font-size:0.95rem;margin-bottom:0.3rem}
+  .order-date{font-size:0.75rem;color:var(--muted)}
+  .order-status{font-size:0.7rem;letter-spacing:0.06em;padding:0.4rem 0.9rem;border-radius:100px;white-space:nowrap;text-transform:uppercase}
+  .status-recue{background:rgba(255,212,59,0.15);color:#e8590c}
+  .status-fabrication{background:rgba(77,171,247,0.15);color:#1971c2}
+  .status-expediee{background:rgba(81,207,102,0.15);color:#2f9e44}
+
+  .empty-state{border:1px solid var(--faint);padding:3rem 2rem;text-align:center;color:var(--muted);font-size:0.85rem}
+  .empty-state a{color:var(--ink);text-decoration:underline}
+
+  .loading-state{padding:3rem;text-align:center;color:var(--muted);font-size:0.85rem}
+
+  .theme-toggle{
+    width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    background:color-mix(in srgb, var(--bg) 45%, transparent);border:1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+    -webkit-backdrop-filter:blur(14px) saturate(1.6);backdrop-filter:blur(14px) saturate(1.6);
+    color:var(--ink);cursor:pointer;flex-shrink:0;-webkit-tap-highlight-color:transparent;
+  }
+  .theme-toggle:hover{transform:scale(1.07)}
+  .theme-toggle .icon-moon{display:none}
+  [data-theme="dark"] .theme-toggle .icon-sun{display:none}
+  [data-theme="dark"] .theme-toggle .icon-moon{display:block}
+
+  [data-theme="dark"]{--bg:#0c0c0d;--ink:#f1f1ec;--muted:#93938d;--faint:#29292b}
+  html,body{transition:background-color .4s ease,color .4s ease}
+  nav{
+    background:color-mix(in srgb, var(--bg) 65%, transparent) !important;
+    -webkit-backdrop-filter:blur(22px) saturate(1.6);backdrop-filter:blur(22px) saturate(1.6);
+    border:1px solid color-mix(in srgb, var(--ink) 8%, transparent) !important;
+    top:0.85rem;left:1.25rem;right:1.25rem;border-radius:18px;
+    box-shadow:0 8px 30px color-mix(in srgb, var(--ink) 8%, transparent);
+  }
+  .card, .order-item, .empty-state{
+    border-radius:16px !important;
+    background:color-mix(in srgb, var(--bg) 55%, transparent);
+    -webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4);
+  }
+
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .8s cubic-bezier(.22,1,.36,1),transform .8s cubic-bezier(.22,1,.36,1)}
+  .reveal.in{opacity:1;transform:translateY(0)}
+
+  @media (max-width:768px){
+    nav{padding:1rem 1.5rem;top:0.5rem;left:0.6rem;right:0.6rem;border-radius:16px}
+    .theme-toggle{width:40px;height:40px}
+    .page{padding:7rem 1.5rem 4rem}
+    .field-row{grid-template-columns:1fr}
+    .order-item{flex-direction:column;align-items:flex-start}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">
+    <svg viewBox="0 0 115 24" height="18">
+      <g stroke="var(--ink)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="12,1 2,23 22,23" stroke-width="1.6"/>
+        <line x1="12" y1="1" x2="12" y2="23" stroke-width="1"/>
+        <line x1="6" y1="14" x2="18" y2="14" stroke-width="1"/>
+        <line x1="2" y1="23" x2="18" y2="14" stroke-width="1"/>
+        <line x1="22" y1="23" x2="6" y2="14" stroke-width="1"/>
+      </g>
+      <text x="30" y="17" font-family="-apple-system,sans-serif" font-size="14" font-weight="600" fill="var(--ink)" letter-spacing="2">PRISM</text>
+    </svg>
+  </a>
+  <div class="nav-right">
+    <button class="logout-btn" onclick="logout()">Se déconnecter</button>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Basculer mode sombre / clair" title="Mode sombre / clair">
+      <svg class="icon-sun" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.2"/><line x1="12" y1="1.5" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22.5"/><line x1="3.5" y1="12" x2="1" y2="12"/><line x1="23" y1="12" x2="20.5" y2="12"/><line x1="5" y1="5" x2="6.8" y2="6.8"/><line x1="17.2" y1="17.2" x2="19" y2="19"/><line x1="19" y1="5" x2="17.2" y2="6.8"/><line x1="6.8" y1="17.2" x2="5" y2="19"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"/></svg>
+    </button>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="label">Espace client</div>
+  <h1 class="title" id="welcomeTitle">Bonjour.</h1>
+
+  <div class="block reveal">
+    <div class="block-head"><div class="block-title">Mes commandes</div></div>
+    <div id="ordersContainer">
+      <div class="loading-state">Chargement…</div>
+    </div>
+  </div>
+
+  <div class="block reveal">
+    <div class="block-head"><div class="block-title">Mon profil</div></div>
+    <div class="card">
+      <div class="field-row">
+        <div class="field">
+          <label>Nom complet</label>
+          <input type="text" id="profileName">
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="profileEmail" disabled>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Téléphone</label>
+          <input type="tel" id="profilePhone">
+        </div>
+        <div class="field">
+          <label>Adresse</label>
+          <input type="text" id="profileAddress">
+        </div>
+      </div>
+      <button class="save-btn" onclick="saveProfile()" id="saveBtn">Enregistrer</button>
+      <div class="msg" id="profileMsg"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script>
+  function toggleTheme(){
+    var root = document.documentElement;
+    var next = (root.getAttribute('data-theme') === 'dark') ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try{ localStorage.setItem('prism-theme', next); }catch(e){}
+  }
+
+  async function logout(){
+    await supabaseClient.auth.signOut();
+    window.location.href = 'connexion.html';
+  }
+
+  var currentUser = null;
+
+  function statusClass(status){
+    var s = (status || '').toLowerCase();
+    if(s.indexOf('fabric') !== -1) return 'status-fabrication';
+    if(s.indexOf('exped') !== -1 || s.indexOf('expéd') !== -1) return 'status-expediee';
+    return 'status-recue';
+  }
+
+  function renderOrders(orders){
+    var container = document.getElementById('ordersContainer');
+    if(!orders || orders.length === 0){
+      container.innerHTML = '<div class="empty-state">Vous n\'avez pas encore de commande. <a href="order.html">Configurer votre PRISM →</a></div>';
+      return;
+    }
+    container.innerHTML = orders.map(function(o){
+      var date = new Date(o.created_at).toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric' });
+      var modelLabel = o.model === 'signature' ? 'PRISM Signature' : 'PRISM One';
+      return '<div class="order-item">' +
+        '<div><div class="order-model">' + modelLabel + '</div><div class="order-date">Commandée le ' + date + '</div></div>' +
+        '<div class="order-status ' + statusClass(o.status) + '">' + (o.status || 'Reçue') + '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  async function loadOrders(){
+    try{
+      const { data, error } = await supabaseClient
+        .from('orders')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if(error){ throw error; }
+      renderOrders(data);
+    }catch(e){
+      document.getElementById('ordersContainer').innerHTML = '<div class="empty-state">Impossible de charger vos commandes pour le moment.</div>';
+    }
+  }
+
+  async function loadProfile(){
+    document.getElementById('profileEmail').value = currentUser.email || '';
+    try{
+      const { data, error } = await supabaseClient
+        .from('profiles')
+        .select('*')
+        .eq('id', currentUser.id)
+        .single();
+      if(error){ throw error; }
+      document.getElementById('profileName').value = data.full_name || '';
+      document.getElementById('profilePhone').value = data.phone || '';
+      document.getElementById('profileAddress').value = data.address || '';
+      document.getElementById('welcomeTitle').textContent = data.full_name ? ('Bonjour, ' + data.full_name.split(' ')[0] + '.') : 'Bonjour.';
+    }catch(e){
+      // profil pas encore créé — pas grave, le formulaire reste vide
+    }
+  }
+
+  async function saveProfile(){
+    var btn = document.getElementById('saveBtn');
+    var msg = document.getElementById('profileMsg');
+    btn.disabled = true; btn.textContent = 'Enregistrement…';
+    var payload = {
+      id: currentUser.id,
+      full_name: document.getElementById('profileName').value.trim(),
+      phone: document.getElementById('profilePhone').value.trim(),
+      address: document.getElementById('profileAddress').value.trim()
+    };
+    try{
+      const { error } = await supabaseClient.from('profiles').upsert(payload);
+      if(error){ throw error; }
+      msg.textContent = 'Profil mis à jour !';
+      msg.className = 'msg show success';
+      document.getElementById('welcomeTitle').textContent = payload.full_name ? ('Bonjour, ' + payload.full_name.split(' ')[0] + '.') : 'Bonjour.';
+    }catch(e){
+      msg.textContent = 'Erreur lors de l\'enregistrement.';
+      msg.className = 'msg show error';
+    }
+    btn.disabled = false; btn.textContent = 'Enregistrer';
+    setTimeout(function(){ msg.className = 'msg'; }, 3000);
+  }
+
+  (async function init(){
+    try{
+      const { data } = await supabaseClient.auth.getSession();
+      if(!data || !data.session){
+        window.location.href = 'connexion.html';
+        return;
+      }
+      currentUser = data.session.user;
+      loadProfile();
+      loadOrders();
+    }catch(e){
+      window.location.href = 'connexion.html';
+    }
+  })();
+
+  // Reveal
+  (function(){
+    var els = document.querySelectorAll('.reveal');
+    if(!('IntersectionObserver' in window)){ els.forEach(function(el){ el.classList.add('in'); }); return; }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, {threshold:0.1});
+    els.forEach(function(el){ io.observe(el); });
+  })();
+</script>
+
+</body>
+</html>

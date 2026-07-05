@@ -393,9 +393,12 @@
     </svg>
   </a>
   <a href="demarrage.html" style="font-size:0.7rem;color:var(--muted);text-decoration:none;border-bottom:1px solid var(--faint);padding-bottom:1px;">Guide de démarrage</a>
+  <a href="compte.html" style="font-size:0.7rem;color:var(--muted);text-decoration:none;border-bottom:1px solid var(--faint);padding-bottom:1px;">Mon compte</a>
   <div class="footer-copy" style="display:flex;align-items:center;gap:0.5rem;"><span class="fr-flag" style="width:15px;height:11px;border-radius:2px;display:inline-block;"></span>© 2026 PRISM — Fabriquée avec soin en France</div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
 <script>
   function toggleTheme(){
     var root = document.documentElement;
@@ -499,6 +502,27 @@
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const data = new FormData(form);
+
+    // Si un client est connecté, on enregistre aussi la commande dans son espace client
+    try {
+      if (typeof supabaseClient !== 'undefined') {
+        const { data: sessionData } = await supabaseClient.auth.getSession();
+        if (sessionData && sessionData.session) {
+          const modeleVal = data.get('modele') || '';
+          await supabaseClient.from('orders').insert({
+            user_id: sessionData.session.user.id,
+            model: modeleVal.indexOf('SIGNATURE') !== -1 ? 'signature' : 'one',
+            color: data.get('couleur') || '',
+            storage: data.get('stockage') || '',
+            os: data.get('os') || '',
+            message: data.get('message') || ''
+          });
+        }
+      }
+    } catch (err) {
+      // Silencieux : l'enregistrement dans l'espace client ne doit jamais bloquer la commande
+    }
+
     try {
       const res = await fetch(form.action, {
         method: 'POST',
