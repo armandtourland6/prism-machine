@@ -273,7 +273,7 @@
       <h2>Configurer votre PRISM</h2>
     </div>
 
-    <form action="https://formspree.io/f/TON_ID_ICI" method="POST" id="orderForm">
+    <form action="https://formspree.io/f/xwvykgdv" method="POST" id="orderForm">
 
 
       <!-- MODEL -->
@@ -497,19 +497,24 @@
     document.querySelector('.info-desc').textContent = 'Logo custom, couleur spéciale, configuration unique — décrivez ce que vous souhaitez et nous vous préparons un devis sur mesure.';
   }
 
-  // Handle form submission with Netlify
+  // Handle form submission
   const form = document.getElementById('orderForm');
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const data = new FormData(form);
+    const submitBtn = document.querySelector('.submit-btn');
+    const originalBtnText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Envoi en cours…';
 
     // Si un client est connecté, on enregistre aussi la commande dans son espace client
+    let savedToSupabase = false;
     try {
       if (typeof supabaseClient !== 'undefined') {
         const { data: sessionData } = await supabaseClient.auth.getSession();
         if (sessionData && sessionData.session) {
           const modeleVal = data.get('modele') || '';
-          await supabaseClient.from('orders').insert({
+          const { error } = await supabaseClient.from('orders').insert({
             user_id: sessionData.session.user.id,
             model: modeleVal.indexOf('SIGNATURE') !== -1 ? 'signature' : 'one',
             color: data.get('couleur') || '',
@@ -517,10 +522,17 @@
             os: data.get('os') || '',
             message: data.get('message') || ''
           });
+          if (!error) savedToSupabase = true;
         }
       }
     } catch (err) {
       // Silencieux : l'enregistrement dans l'espace client ne doit jamais bloquer la commande
+    }
+
+    function showSuccess() {
+      document.querySelector('.page').style.display = 'none';
+      document.getElementById('successPage').style.display = 'block';
+      window.scrollTo(0, 0);
     }
 
     try {
@@ -530,14 +542,23 @@
         headers: { 'Accept': 'application/json' }
       });
       if (res.ok) {
-        document.querySelector('.page').style.display = 'none';
-        document.getElementById('successPage').style.display = 'block';
-        window.scrollTo(0, 0);
+        showSuccess();
+      } else if (savedToSupabase) {
+        // La commande est bien enregistrée même si la notification email a échoué
+        showSuccess();
       } else {
         alert('Une erreur est survenue. Merci de nous contacter à prismmachine0@gmail.com');
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalBtnText;
       }
     } catch(err) {
-      alert('Une erreur est survenue. Merci de nous contacter à prismmachine0@gmail.com');
+      if (savedToSupabase) {
+        showSuccess();
+      } else {
+        alert('Une erreur est survenue. Merci de nous contacter à prismmachine0@gmail.com');
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalBtnText;
+      }
     }
   });
 </script>

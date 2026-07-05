@@ -38,7 +38,7 @@
   .hero-price{font-family:'Instrument Serif',serif;font-size:3.5rem;color:#fff;font-weight:400;letter-spacing:-0.02em;margin-bottom:1.5rem}
   .hero-price sup{font-size:1.5rem;vertical-align:super}
   .hero-desc{font-size:0.9rem;color:rgba(255,255,255,0.65);max-width:400px;line-height:1.7;margin-bottom:2rem}
-  .btn-order{display:inline-block;background:#fff;color:var(--ink);padding:0.9rem 2.5rem;font-size:0.85rem;font-weight:500;letter-spacing:0.08em;text-decoration:none;transition:opacity 0.2s;font-family:'Instrument Sans',sans-serif}
+  .btn-order{display:inline-block;background:#fff;color:#111110;padding:0.9rem 2.5rem;font-size:0.85rem;font-weight:500;letter-spacing:0.08em;text-decoration:none;transition:opacity 0.2s;font-family:'Instrument Sans',sans-serif}
   .btn-order:hover{opacity:0.85}
 
   /* GALLERY */
@@ -56,7 +56,7 @@
   .section-title{font-family:'Instrument Serif',serif;font-size:clamp(1.75rem,3vw,2.5rem);font-weight:400;font-style:italic;letter-spacing:-0.01em;line-height:1.2;max-width:480px;margin-bottom:3rem}
 
   /* SPECS */
-  .specs{border-top:1px solid var(--faint)}
+  .specs{border-top:1px solid var(--faint);padding:0.5rem 2rem}
   .spec-row{display:flex;align-items:baseline;padding:1rem 0;border-bottom:1px solid var(--faint);gap:2rem}
   .spec-key{width:160px;flex-shrink:0;font-size:0.7rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase}
   .spec-val{font-size:0.85rem}
@@ -84,6 +84,9 @@
     .gallery-main{grid-column:span 2}
     .gallery-side{grid-template-rows:auto}
     .section{padding:4rem 1.5rem}
+    .specs{padding:0.5rem 1.25rem}
+    .spec-row{flex-wrap:wrap;gap:0.4rem}
+    .spec-key{width:100%}
     .includes{grid-template-columns:1fr}
     .include-item{border-right:none!important}
     .order-bar{padding:1rem 1.5rem}
