@@ -9,7 +9,7 @@
 //    NE JAMAIS mettre la clé "secret" ici ou dans un fichier du site.
 // ============================================================
 
-const SUPABASE_URL = 'https://TON-PROJET.supabase.co';
+const SUPABASE_URL = 'https://efcgazpqmnovlhydkmtg.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_s1sP439rJdMHwIza1yoPFA_wykQqfS4';
 
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
