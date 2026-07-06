@@ -168,8 +168,9 @@
   .res-card:hover { background: color-mix(in srgb, var(--ink) 4%, transparent) !important; }
 
   @media (max-width: 768px) {
-    nav { top: 0.5rem; left: 0.6rem; right: 0.6rem; border-radius: 16px; padding: 0.75rem 1rem; }
+    nav { top: 0.5rem; left: 0.6rem; right: 0.6rem; border-radius: 16px; padding: 0.75rem 1rem; -webkit-backdrop-filter: blur(12px) saturate(1.3) !important; backdrop-filter: blur(12px) saturate(1.3) !important; transform: translateZ(0); will-change: transform; }
     .theme-toggle { width: 40px; height: 40px; margin-left: 0.6rem; }
+    .steps, .simple-list, .res-note, .res-card, .terminal-help { -webkit-backdrop-filter: blur(10px) saturate(1.2) !important; backdrop-filter: blur(10px) saturate(1.2) !important; }
   }
   /* ================= VFX : barre de progression au scroll ================= */
   .scroll-progress{

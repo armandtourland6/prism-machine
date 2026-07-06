@@ -212,9 +212,10 @@
   }
 
   @media (max-width: 768px) {
-    nav { top: 0.5rem; left: 0.6rem; right: 0.6rem; border-radius: 16px; padding: 0.75rem 1rem; }
+    nav { top: 0.5rem; left: 0.6rem; right: 0.6rem; border-radius: 16px; padding: 0.75rem 1rem; -webkit-backdrop-filter: blur(12px) saturate(1.3) !important; backdrop-filter: blur(12px) saturate(1.3) !important; transform: translateZ(0); will-change: transform; }
     .theme-toggle { width: 40px; height: 40px; margin-left: 0.6rem; }
     .nav-cta { padding: 0.4rem 1rem; font-size: 0.75rem; }
+    .glass-panel, .features, .stats, .specs { -webkit-backdrop-filter: blur(10px) saturate(1.2) !important; backdrop-filter: blur(10px) saturate(1.2) !important; }
   }
 
   /* ================= Made in France + micro-interactions ================= */
@@ -1012,6 +1013,15 @@
     document.addEventListener('visibilitychange', function(){
       running = !document.hidden;
     });
+
+    if('IntersectionObserver' in window){
+      var heroVisible = true;
+      var io = new IntersectionObserver(function(entries){
+        heroVisible = entries[0].isIntersecting;
+        running = heroVisible && !document.hidden;
+      }, { threshold: 0 });
+      io.observe(hero);
+    }
   })();
 
   // ===== Roue de compatibilité jeux =====
@@ -1029,6 +1039,15 @@
     var defaultLine1 = 'Découvrez les performances FPS mesurées sur chaque titre populaire.';
     var angle = 0;
     var ticking = false;
+    var wheelActive = true;
+
+    if('IntersectionObserver' in window){
+      wheelActive = false;
+      var wheelIO = new IntersectionObserver(function(entries){
+        wheelActive = entries[0].isIntersecting;
+      }, { rootMargin: '200px 0px 200px 0px', threshold: 0 });
+      wheelIO.observe(outer);
+    }
 
     function render(){
       wheel.style.transform = 'rotate(' + angle + 'deg)';
@@ -1039,6 +1058,7 @@
     }
 
     function onScroll(){
+      if(!wheelActive) return;
       var rect = outer.getBoundingClientRect();
       var vh = window.innerHeight || document.documentElement.clientHeight;
       // rotate proportionally to how far the wheel has traveled through the viewport
