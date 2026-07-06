@@ -219,8 +219,12 @@
   .diff-item, .include-item{ will-change: transform; }
 
   /* ================= VFX : reveal au scroll ================= */
-  .reveal{ opacity:0; transform:translateY(28px); transition:opacity .9s cubic-bezier(.22,1,.36,1), transform .9s cubic-bezier(.22,1,.36,1); }
-  .reveal.in{ opacity:1; transform:translateY(0); }
+  .reveal{ opacity:0; transform:translateY(28px); transition:opacity .7s ease-out, transform .7s ease-out; will-change:opacity, transform; }
+  .reveal.in{ opacity:1; transform:translateY(0); will-change:auto; }
+  @media (max-width: 768px){
+    .reveal{ transform:none; transition:opacity .5s ease-out; }
+    .reveal.in{ transform:none; }
+  }
 
   /* ================= VFX : shine sur les boutons ================= */
   .btn-order, .nav-cta{ position:relative; overflow:hidden; isolation:isolate; }
@@ -356,12 +360,12 @@
   <h2 class="section-title">Absolument tout.</h2>
   <div class="includes">
     <div class="include-item"><h3>APU AMD Cyan Skillfish</h3><p>La puce graphique de la PS5, recyclée. 24 CU RDNA 2 + 6 cœurs Zen 2 dans un format compact.</p></div>
-    <div class="include-item"><h3>16 GB GDDR6</h3><p>Mémoire unifiée CPU + GPU. Pas de RAM supplémentaire à acheter.</p></div>
+    <div class="include-item"><h3>16 GB GDDR6</h3><p>16 Go partagés entre le processeur et la carte graphique. Rien d'autre à acheter.</p></div>
     <div class="include-item include-highlight"><h3>SSD NVMe 1 To+</h3><p>Au moins 1 To inclus. Capacité supérieure disponible sur demande.</p></div>
     <div class="include-item"><h3>WiFi 6 + Bluetooth 5</h3><p>Carte TP-Link AX900. Manettes, casques, réseau — tout sans câble.</p></div>
     <div class="include-item include-highlight"><h3>AIO Thermalright</h3><p>Refroidissement liquide complet inclus et monté. Silencieux, efficace.</p></div>
     <div class="include-item include-highlight"><h3>RGB ventilateur + intérieur</h3><p>Strip ARGB et fan RGB inclus et configurés.</p></div>
-    <div class="include-item"><h3>Bazzite préinstallé</h3><p>OS gaming optimisé. Compatible Steam & Proton. Ou OS au choix.</p></div>
+    <div class="include-item"><h3>Bazzite préinstallé</h3><p>Le système lance Steam au démarrage, compatible avec presque tous les jeux PC. Ou un autre OS si vous préférez.</p></div>
     <div class="include-item include-highlight"><h3>Boîtier sur mesure</h3><p>Logo gravé, coloris personnalisé, PETG-CF premium.</p></div>
     <div class="include-item include-highlight"><h3>Certificat numéroté</h3><p>Certificat d'authenticité unique, signé, numéroté.</p></div>
   </div>
