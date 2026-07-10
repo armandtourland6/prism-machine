@@ -184,6 +184,7 @@
     box-shadow: 0 0 8px rgba(132,94,247,0.5);
   }
   .model-card{ will-change: transform; }
+  @media (max-width: 768px){ .model-card{ will-change: auto; } }
 
   /* ================= VFX : reveal au scroll + shine bouton ================= */
   .reveal{ opacity:0; transform:translateY(28px); transition:opacity .7s ease-out, transform .7s ease-out; will-change:opacity, transform; }
@@ -431,6 +432,7 @@
   (function(){
     var reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
     if(reduceMotion) return;
+    if(!window.matchMedia || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
     document.querySelectorAll('.model-card').forEach(function(card){
       card.addEventListener('mousemove', function(e){
         var r = card.getBoundingClientRect();

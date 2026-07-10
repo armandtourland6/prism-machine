@@ -180,6 +180,7 @@
     box-shadow: 0 0 8px rgba(132,94,247,0.5);
   }
   .res-card{ will-change: transform; }
+  @media (max-width: 768px){ .res-card{ will-change: auto; } }
 </style>
 </head>
 <body>
@@ -431,6 +432,7 @@
   (function(){
     var reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
     if(reduceMotion) return;
+    if(!window.matchMedia || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
     document.querySelectorAll('.res-card').forEach(function(card){
       card.addEventListener('mousemove', function(e){
         var r = card.getBoundingClientRect();

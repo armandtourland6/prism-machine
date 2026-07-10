@@ -202,6 +202,7 @@
     box-shadow: 0 0 8px rgba(132,94,247,0.5);
   }
   .include-item{ will-change: transform; }
+  @media (max-width: 768px){ .include-item{ will-change: auto; } }
 
   /* ================= VFX : reveal au scroll ================= */
   .reveal{ opacity:0; transform:translateY(28px); transition:opacity .7s ease-out, transform .7s ease-out; will-change:opacity, transform; }
@@ -371,6 +372,7 @@
   (function(){
     var reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
     if(reduceMotion) return;
+    if(!window.matchMedia || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
     document.querySelectorAll('.include-item').forEach(function(card){
       card.addEventListener('mousemove', function(e){
         var r = card.getBoundingClientRect();
@@ -434,10 +436,12 @@
     var comets = [];
     var W = 0, H = 0, DPR = 1;
     var running = true;
+    var isMobile = window.matchMedia && matchMedia('(max-width: 768px)').matches;
+    var maxComets = isMobile ? 3 : 8;
 
     function resize(){
       var rect = hero.getBoundingClientRect();
-      DPR = Math.min(window.devicePixelRatio || 1, 2);
+      DPR = Math.min(window.devicePixelRatio || 1, isMobile ? 1 : 2);
       W = rect.width; H = rect.height;
       canvas.width = Math.max(1, W * DPR);
       canvas.height = Math.max(1, H * DPR);
@@ -447,6 +451,7 @@
     resize();
 
     function spawnComet(){
+      if(comets.length >= maxComets) return;
       var angle = (Math.random() * 26 + 18) * Math.PI / 180;
       var fromLeft = Math.random() < 0.65;
       var startX, startY;
@@ -464,12 +469,12 @@
     }
 
     var lastSpawn = 0;
-    var nextGap = 700;
+    var nextGap = isMobile ? 1600 : 700;
 
     function loop(t){
       if(!running){ requestAnimationFrame(loop); return; }
       ctx.clearRect(0, 0, W, H);
-      if(t - lastSpawn > nextGap){ spawnComet(); lastSpawn = t; nextGap = 900 + Math.random() * 1600; }
+      if(t - lastSpawn > nextGap){ spawnComet(); lastSpawn = t; nextGap = (isMobile ? 1800 : 900) + Math.random() * (isMobile ? 2200 : 1600); }
       for(var i = comets.length - 1; i >= 0; i--){
         var c = comets[i];
         c.x += c.vx; c.y += c.vy;

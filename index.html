@@ -79,7 +79,18 @@
     display: flex; align-items: center; gap: 1rem;
   }
   .hero-eyebrow::before, .hero-eyebrow::after { content: ''; display: block; width: 32px; height: 1px; background: rgba(255,255,255,0.2); }
-  .hero h1 { font-size: clamp(3.5rem, 9vw, 7.5rem); font-weight: 300; letter-spacing: -0.03em; line-height: 1; margin-bottom: 0.15em; color: #fff; }
+  .hero h1 { font-size: clamp(3.5rem, 9vw, 7.5rem); font-weight: 300; letter-spacing: -0.03em; line-height: 1; margin-bottom: 0.15em; color: #fff; animation: heroGlitchIn 0.9s ease-out 0.15s both; }
+  @keyframes heroGlitchIn{
+    0%{ opacity:0; transform:translateX(-8px); text-shadow:-3px 0 #ff6b6b, 3px 0 #4dabf7; filter:blur(2px); }
+    18%{ opacity:1; transform:translateX(5px); text-shadow:3px 0 #ff6b6b, -3px 0 #4dabf7; filter:blur(0); }
+    36%{ transform:translateX(-3px); text-shadow:-2px 0 #845ef7, 2px 0 #51cf66; }
+    54%{ transform:translateX(2px); text-shadow:2px 0 #ffd43b, -2px 0 #4dabf7; }
+    72%{ transform:translateX(-1px); text-shadow:-1px 0 rgba(255,255,255,0.4), 1px 0 rgba(255,255,255,0.4); }
+    100%{ opacity:1; transform:translateX(0); text-shadow:none; filter:blur(0); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .hero h1{ animation:none; }
+  }
   .hero h1 em { font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; }
   .hero-sub { font-size: 1rem; color: rgba(255,255,255,0.65); max-width: 380px; margin: 1.75rem auto 3rem; line-height: 1.7; font-weight: 300; }
   .hero-actions { display: flex; gap: 1.5rem; align-items: center; }
@@ -147,6 +158,9 @@
     .spec-row { flex-wrap: wrap; gap: 0.4rem; }
     .spec-key { width: 100%; }
     .variantes-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    .cestquoi-grid { grid-template-columns: 1fr !important; }
+    .cestquoi-item { border-right: none !important; border-top: 1px solid var(--faint) !important; padding: 1.75rem 1.5rem !important; }
+    .cestquoi-item:first-child { border-top: none !important; }
     .section { padding: 5rem 1.5rem; }
     footer { flex-direction: column; gap: 0.5rem; }
   }
@@ -215,7 +229,9 @@
     nav { top: 0.5rem; left: 0.6rem; right: 0.6rem; border-radius: 16px; padding: 0.75rem 1rem; -webkit-backdrop-filter: blur(12px) saturate(1.3) !important; backdrop-filter: blur(12px) saturate(1.3) !important; transform: translateZ(0); will-change: transform; }
     .theme-toggle { width: 40px; height: 40px; margin-left: 0.6rem; }
     .nav-cta { padding: 0.4rem 1rem; font-size: 0.75rem; }
-    .glass-panel, .features, .stats, .specs { -webkit-backdrop-filter: blur(10px) saturate(1.2) !important; backdrop-filter: blur(10px) saturate(1.2) !important; }
+    .glass-panel, .features, .stats, .specs, .marquee-wrap { -webkit-backdrop-filter: blur(10px) saturate(1.2) !important; backdrop-filter: blur(10px) saturate(1.2) !important; }
+    .marquee-track{ animation-duration: 18s; }
+    .marquee-track span{ font-size: 0.62rem; }
   }
 
   /* ================= Made in France + micro-interactions ================= */
@@ -309,6 +325,30 @@
 
   /* ================= VFX : tilt 3D sur les cartes ================= */
   .feature{ will-change: transform; }
+  @media (max-width: 768px){ .feature{ will-change: auto; } }
+
+  /* ================= VFX : bandeau défilant ================= */
+  .marquee-wrap{
+    overflow:hidden;
+    border-top:1px solid var(--faint); border-bottom:1px solid var(--faint);
+    background: color-mix(in srgb, var(--bg) 55%, transparent);
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    padding:0.9rem 0;
+  }
+  .marquee-track{
+    display:flex; align-items:center; gap:2.5rem; white-space:nowrap; width:max-content;
+    animation: marqueeScroll 26s linear infinite;
+  }
+  .marquee-track span{ font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); font-weight:500; }
+  .marquee-track span.dot{ color:var(--purple); font-size:0.9rem; }
+  .marquee-wrap:hover .marquee-track{ animation-play-state:paused; }
+  @keyframes marqueeScroll{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce){
+    .marquee-track{ animation:none; }
+  }
+
+  /* ================= VFX : boutons magnétiques ================= */
+  .btn-primary, .cta-main, .btn-order{ transition: transform .3s cubic-bezier(.22,1,.36,1), opacity .2s ease, box-shadow .25s ease, background-color .3s ease; }
 
   /* ================= VFX : reveal au scroll ================= */
   .reveal{
@@ -527,6 +567,23 @@
   </div>
 </section>
 
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span>🇫🇷 Fabriquée en France</span><span class="dot">•</span>
+    <span>Zéro abonnement</span><span class="dot">•</span>
+    <span>100% réparable</span><span class="dot">•</span>
+    <span>Steam Machine</span><span class="dot">•</span>
+    <span>APU PS5 recyclé</span><span class="dot">•</span>
+    <span>Assemblée à la main</span><span class="dot">•</span>
+    <span>🇫🇷 Fabriquée en France</span><span class="dot">•</span>
+    <span>Zéro abonnement</span><span class="dot">•</span>
+    <span>100% réparable</span><span class="dot">•</span>
+    <span>Steam Machine</span><span class="dot">•</span>
+    <span>APU PS5 recyclé</span><span class="dot">•</span>
+    <span>Assemblée à la main</span><span class="dot">•</span>
+  </div>
+</div>
+
 <div class="stats reveal">
   <div class="stat"><span class="stat-number" data-count="24" data-suffix="">0</span><span class="stat-label">CU RDNA 2</span></div>
   <div class="stat"><span class="stat-number" data-count="16" data-suffix=" GB">0</span><span class="stat-label">GDDR6</span></div>
@@ -592,39 +649,39 @@
   <h2 class="section-title">Une console. Pas un abonnement.</h2>
   <p style="font-size:0.95rem;color:var(--muted);max-width:560px;line-height:1.8;margin-bottom:3.5rem;">PRISM ressemble à une petite boîte. On la branche à la télé avec un câble HDMI — comme une box internet. On allume. Et on joue. C'est tout.</p>
 
-  <div class="glass-panel" style="display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--faint);">
+  <div class="glass-panel cestquoi-grid" style="display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--faint);">
 
-    <div style="padding:2.25rem 2rem;border-right:1px solid var(--faint);">
+    <div class="cestquoi-item" style="padding:2.25rem 2rem;border-right:1px solid var(--faint);">
       <div style="font-size:0.65rem;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;margin-bottom:1.25rem;">01</div>
       <h3 style="font-size:0.9rem;font-weight:500;margin-bottom:0.6rem;">C'est quoi concrètement ?</h3>
       <p style="font-size:0.8rem;color:var(--muted);line-height:1.65;">Un mini-ordinateur dédié aux jeux vidéo, branché à la TV. On joue avec une manette depuis le canapé — exactement comme une PlayStation ou une Xbox, mais sans les restrictions.</p>
     </div>
 
-    <div style="padding:2.25rem 2rem;border-right:1px solid var(--faint);">
+    <div class="cestquoi-item" style="padding:2.25rem 2rem;border-right:1px solid var(--faint);">
       <div style="font-size:0.65rem;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;margin-bottom:1.25rem;">02</div>
       <h3 style="font-size:0.9rem;font-weight:500;margin-bottom:0.6rem;">Comment on installe les jeux ?</h3>
       <p style="font-size:0.8rem;color:var(--muted);line-height:1.65;">Via <strong style="color:var(--ink);font-weight:500;">Steam</strong> — la plus grande boutique de jeux au monde. On cherche un jeu, on clique "Installer", il se télécharge. Comme une appli sur smartphone. Des milliers de jeux disponibles, beaucoup sont gratuits.</p>
     </div>
 
-    <div style="padding:2.25rem 2rem;">
+    <div class="cestquoi-item" style="padding:2.25rem 2rem;">
       <div style="font-size:0.65rem;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;margin-bottom:1.25rem;">03</div>
       <h3 style="font-size:0.9rem;font-weight:500;margin-bottom:0.6rem;">Zéro abonnement mensuel</h3>
       <p style="font-size:0.8rem;color:var(--muted);line-height:1.65;">Pas d'abonnement PlayStation Plus, pas de Xbox Game Pass obligatoire. On achète un jeu une fois, on le garde à vie. Certains sont même <strong style="color:var(--ink);font-weight:500;">totalement gratuits</strong> (Fortnite, Rocket League…).</p>
     </div>
 
-    <div style="padding:2.25rem 2rem;border-right:1px solid var(--faint);border-top:1px solid var(--faint);">
+    <div class="cestquoi-item" style="padding:2.25rem 2rem;border-right:1px solid var(--faint);border-top:1px solid var(--faint);">
       <div style="font-size:0.65rem;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;margin-bottom:1.25rem;">04</div>
       <h3 style="font-size:0.9rem;font-weight:500;margin-bottom:0.6rem;">Ça se branche comment ?</h3>
       <p style="font-size:0.8rem;color:var(--muted);line-height:1.65;">Un câble HDMI vers la TV, un câble d'alimentation dans la prise. C'est tout. La manette se connecte en Bluetooth. Pas besoin d'écran, de clavier ou de souris.</p>
     </div>
 
-    <div style="padding:2.25rem 2rem;border-right:1px solid var(--faint);border-top:1px solid var(--faint);">
+    <div class="cestquoi-item" style="padding:2.25rem 2rem;border-right:1px solid var(--faint);border-top:1px solid var(--faint);">
       <div style="font-size:0.65rem;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;margin-bottom:1.25rem;">05</div>
       <h3 style="font-size:0.9rem;font-weight:500;margin-bottom:0.6rem;">C'est sûr pour les enfants ?</h3>
       <p style="font-size:0.8rem;color:var(--muted);line-height:1.65;">Steam intègre un <strong style="color:var(--ink);font-weight:500;">contrôle parental</strong> complet : limite de temps de jeu, filtrage par âge, historique d'activité. Les parents gardent le contrôle.</p>
     </div>
 
-    <div style="padding:2.25rem 2rem;border-top:1px solid var(--faint);">
+    <div class="cestquoi-item" style="padding:2.25rem 2rem;border-top:1px solid var(--faint);">
       <div style="font-size:0.65rem;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;margin-bottom:1.25rem;">06</div>
       <h3 style="font-size:0.9rem;font-weight:500;margin-bottom:0.6rem;">Versus une console classique ?</h3>
       <p style="font-size:0.8rem;color:var(--muted);line-height:1.65;">Une PS5 coûte 550€ + les jeux à 80€ chacun + abonnement 60€/an. PRISM c'est <strong style="color:var(--ink);font-weight:500;">399€ tout compris</strong>, des jeux souvent 5× moins chers, et pas d'abonnement forcé.</p>
@@ -829,6 +886,7 @@
   (function(){
     var reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
     if(reduceMotion) return;
+    if(!window.matchMedia || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
     document.querySelectorAll('.feature').forEach(function(card){
       card.addEventListener('mousemove', function(e){
         var r = card.getBoundingClientRect();
@@ -925,6 +983,24 @@
     }
   })();
 
+  // ===== VFX : boutons magnétiques =====
+  (function(){
+    if(!window.matchMedia || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    document.querySelectorAll('.btn-primary, .cta-main, .btn-order').forEach(function(btn){
+      btn.addEventListener('mousemove', function(e){
+        var r = btn.getBoundingClientRect();
+        var x = e.clientX - r.left - r.width / 2;
+        var y = e.clientY - r.top - r.height / 2;
+        btn.style.transition = 'none';
+        btn.style.transform = 'translate(' + (x * 0.22) + 'px,' + (y * 0.28) + 'px)';
+      });
+      btn.addEventListener('mouseleave', function(){
+        btn.style.transition = 'transform .4s cubic-bezier(.22,1,.36,1)';
+        btn.style.transform = 'translate(0,0)';
+      });
+    });
+  })();
+
   // ===== Comètes animées dans le hero =====
   (function(){
     var canvas = document.getElementById('heroComets');
@@ -937,10 +1013,12 @@
     var comets = [];
     var W = 0, H = 0, DPR = 1;
     var running = true;
+    var isMobile = window.matchMedia && matchMedia('(max-width: 768px)').matches;
+    var maxComets = isMobile ? 3 : 8;
 
     function resize(){
       var rect = hero.getBoundingClientRect();
-      DPR = Math.min(window.devicePixelRatio || 1, 2);
+      DPR = Math.min(window.devicePixelRatio || 1, isMobile ? 1 : 2);
       W = rect.width; H = rect.height;
       canvas.width = Math.max(1, W * DPR);
       canvas.height = Math.max(1, H * DPR);
@@ -950,6 +1028,7 @@
     resize();
 
     function spawnComet(){
+      if(comets.length >= maxComets) return;
       var angle = (Math.random() * 26 + 18) * Math.PI / 180; // descend vers la droite
       var fromLeft = Math.random() < 0.65;
       var startX, startY;
@@ -967,7 +1046,7 @@
     }
 
     var lastSpawn = 0;
-    var nextGap = 700;
+    var nextGap = isMobile ? 1600 : 700;
 
     function loop(t){
       if(!running){ requestAnimationFrame(loop); return; }
@@ -976,7 +1055,7 @@
       if(t - lastSpawn > nextGap){
         spawnComet();
         lastSpawn = t;
-        nextGap = 900 + Math.random() * 1600;
+        nextGap = (isMobile ? 1800 : 900) + Math.random() * (isMobile ? 2200 : 1600);
       }
 
       for(var i = comets.length - 1; i >= 0; i--){
