@@ -12,7 +12,7 @@
   }catch(e){}
 })();
 </script>
-<title>PRISM — La console Française </title>
+<title>PRISM — The DIY Steam Machine</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><polygon points='16,2 2,30 30,30' fill='none' stroke='%23111110' stroke-width='2' stroke-linejoin='round'/><line x1='16' y1='2' x2='16' y2='30' stroke='%23111110' stroke-width='1.2'/><line x1='8' y1='19' x2='24' y2='19' stroke='%23111110' stroke-width='1.2'/><line x1='2' y1='30' x2='24' y2='19' stroke='%23111110' stroke-width='1.2'/><line x1='30' y1='30' x2='8' y2='19' stroke='%23111110' stroke-width='1.2'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
@@ -353,7 +353,8 @@
   }
   .viewer3d-hint.hide{ opacity:0; }
   @media (max-width:768px){
-    .viewer3d-canvas-holder{ height:360px; }
+    .viewer3d-canvas-holder{ height:320px; touch-action: pan-y; }
+    #prismCanvas3d{ cursor:default; }
   }
 
   /* ================= VFX : barre de progression au scroll ================= */
@@ -677,7 +678,7 @@
 <div class="section reveal" id="viewer3d">
   <div class="label">Regardez-la de près</div>
   <h2 class="section-title">Tournez-la sous tous les angles.</h2>
-  <p style="font-size:0.875rem;color:var(--muted);max-width:480px;margin-bottom:2.5rem;line-height:1.7;">Le vrai modèle 3D de la PRISM, dans votre navigateur. Cliquez-glissez pour la faire tourner, zoomez pour voir la grille hexagonale de près.</p>
+  <p style="font-size:0.875rem;color:var(--muted);max-width:480px;margin-bottom:2.5rem;line-height:1.7;">Le vrai modèle 3D de la PRISM, dans votre navigateur. Elle tourne toute seule en suivant votre défilement — glissez pour l'orienter vous-même.</p>
 
   <div class="viewer3d-wrap">
     <div class="viewer3d-canvas-holder" id="viewer3dHolder">
@@ -688,7 +689,7 @@
       </div>
       <div class="viewer3d-hint" id="viewer3dHint">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3-3 3 3M9 13l3 3 3-3"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg>
-        Glissez pour tourner
+        <span id="viewer3dHintText">Faites défiler</span>
       </div>
     </div>
   </div>
@@ -1338,6 +1339,7 @@
     var holder = document.getElementById('viewer3dHolder');
     var loadingEl = document.getElementById('viewer3dLoading');
     var hintEl = document.getElementById('viewer3dHint');
+    var hintTextEl = document.getElementById('viewer3dHintText');
     if(!canvas || !holder) return;
 
     var supportsWebGL = (function(){
@@ -1351,13 +1353,19 @@
       return;
     }
 
+    var isMobile = window.matchMedia && matchMedia('(max-width: 768px)').matches;
+    var reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var maxPixelRatio = isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 2);
+
+    if(hintTextEl) hintTextEl.textContent = isMobile ? 'Faites défiler' : 'Glissez ou défilez';
+
     var scene = new THREE.Scene();
     scene.background = null;
 
     var camera = new THREE.PerspectiveCamera(38, holder.clientWidth / holder.clientHeight, 1, 5000);
 
-    var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: !isMobile, alpha: true, powerPreference: 'high-performance' });
+    renderer.setPixelRatio(maxPixelRatio);
     renderer.setSize(holder.clientWidth, holder.clientHeight);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -1375,22 +1383,32 @@
     rim.position.set(0, 120, -320);
     scene.add(rim);
 
+    // Groupe pivot : la rotation liée au scroll agit sur ce groupe,
+    // pendant que OrbitControls orbite la caméra indépendamment (glisser).
+    var pivot = new THREE.Group();
+    scene.add(pivot);
+
     var controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.08;
     controls.enablePan = false;
+    controls.enableZoom = !isMobile;
+    controls.autoRotate = false;
     controls.minDistance = 200;
     controls.maxDistance = 900;
-    controls.autoRotate = true;
-    controls.autoRotateSpeed = 1.4;
+    if(isMobile){
+      controls.enabled = false; // évite tout conflit avec le scroll tactile de la page
+    }
 
     var dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath('https://unpkg.com/three@0.160.0/examples/jsm/libs/draco/');
     var loader = new GLTFLoader();
     loader.setDRACOLoader(dracoLoader);
 
-    var modelCenter = new THREE.Vector3();
-    var interacted = false;
+    var modelLoaded = false;
+    var currentRotY = 0;
+    var targetRotY = 0;
+    var entranceProgress = 0; // 0 -> 1, anime l'arrivée du modèle
 
     loader.load('prism-console.glb', function(gltf){
       var model = gltf.scene;
@@ -1400,40 +1418,39 @@
           c.material.roughness = 0.6;
         }
       });
-      scene.add(model);
 
       var box = new THREE.Box3().setFromObject(model);
       var center = box.getCenter(new THREE.Vector3());
       var size = box.getSize(new THREE.Vector3());
       var maxDim = Math.max(size.x, size.y, size.z);
 
-      modelCenter.copy(center);
-      controls.target.copy(center);
-      camera.position.set(center.x + maxDim*0.85, center.y + maxDim*0.55, center.z + maxDim*1.05);
+      // Recentre le modèle sur le pivot pour une rotation propre autour de son centre
+      model.position.sub(center);
+      pivot.add(model);
+
+      controls.target.set(0, 0, 0);
+      camera.position.set(maxDim*0.85, maxDim*0.5, maxDim*1.05);
       controls.minDistance = maxDim * 0.7;
       controls.maxDistance = maxDim * 2.2;
       controls.update();
 
+      modelLoaded = true;
       if(loadingEl) loadingEl.classList.add('hide');
     }, undefined, function(err){
       if(loadingEl){
         loadingEl.querySelector('span').textContent = 'Aperçu 3D indisponible pour le moment.';
         loadingEl.querySelector('.viewer3d-spinner').style.display = 'none';
       }
-      controls.autoRotate = false;
     });
 
+    var interacted = false;
     function hideHint(){
       if(hintEl && !interacted){
         interacted = true;
         hintEl.classList.add('hide');
       }
     }
-    renderer.domElement.addEventListener('pointerdown', function(){
-      hideHint();
-      controls.autoRotate = false;
-    });
-    setTimeout(hideHint, 4500);
+    renderer.domElement.addEventListener('pointerdown', hideHint);
 
     function onResize(){
       var w = holder.clientWidth, h = holder.clientHeight;
@@ -1444,17 +1461,52 @@
     }
     window.addEventListener('resize', onResize);
 
+    // ===== Rotation liée au scroll (effet "stylé") =====
+    var section = holder.closest('.section');
     var rendering = true;
+
+    function updateScrollRotation(){
+      if(!section) return;
+      var rect = section.getBoundingClientRect();
+      var vh = window.innerHeight || document.documentElement.clientHeight;
+      // progress = 0 quand la section entre par le bas, 1 quand elle sort par le haut
+      var progress = (vh - rect.top) / (vh + rect.height);
+      progress = Math.max(0, Math.min(1, progress));
+      targetRotY = progress * Math.PI * 2.2; // ~1.1 tour complet sur toute la traversée
+      if(progress > 0.02) hideHint();
+    }
+    window.addEventListener('scroll', updateScrollRotation, { passive: true });
+    updateScrollRotation();
+
     if('IntersectionObserver' in window){
       new IntersectionObserver(function(entries){
         rendering = entries[0].isIntersecting;
-      }, { threshold: 0 }).observe(holder);
+        if(rendering) updateScrollRotation();
+      }, { threshold: 0, rootMargin: '80px 0px 80px 0px' }).observe(holder);
     }
+
+    var clock = new THREE.Clock();
 
     function animate(){
       requestAnimationFrame(animate);
       if(!rendering) return;
-      controls.update();
+
+      var dt = Math.min(clock.getDelta(), 0.05);
+
+      if(modelLoaded){
+        // Entrée douce à l'apparition
+        if(entranceProgress < 1){
+          entranceProgress = Math.min(1, entranceProgress + dt * 1.4);
+          var ease = 1 - Math.pow(1 - entranceProgress, 3);
+          pivot.scale.setScalar(0.82 + ease * 0.18);
+        }
+        // Rotation "spring" : rattrape doucement l'angle cible du scroll
+        var springSpeed = reduceMotion ? 1 : 5.5;
+        currentRotY += (targetRotY - currentRotY) * Math.min(1, dt * springSpeed);
+        pivot.rotation.y = currentRotY;
+      }
+
+      if(!isMobile) controls.update();
       renderer.render(scene, camera);
     }
     animate();
