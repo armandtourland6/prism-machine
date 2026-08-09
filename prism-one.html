@@ -398,9 +398,9 @@
     <div class="config-row">
       <div class="config-label">Stockage SSD</div>
       <div class="pill-group" id="storagePills">
-        <button type="button" class="pill selected" data-value="500 Go" data-price="0">500 Go <span>inclus</span></button>
-        <button type="button" class="pill" data-value="1 To" data-price="60">1 To <span>+60€</span></button>
-        <button type="button" class="pill" data-value="2 To" data-price="140">2 To <span>+140€</span></button>
+        <button type="button" class="pill selected" data-value="256 Go" data-price="0">256 Go <span>inclus</span></button>
+        <button type="button" class="pill" data-value="512 Go" data-price="30">512 Go <span>+30€</span></button>
+        <button type="button" class="pill" data-value="1 To" data-price="119">1 To <span>+119€</span></button>
       </div>
     </div>
 
@@ -657,7 +657,7 @@
   // ===== Configurateur produit =====
   (function(){
     var basePrice = 399;
-    var state = { color: 'Blanc', colorPrice: 0, storage: '500 Go', storagePrice: 0, os: 'Bazzite (recommandé)', osPrice: 0, qty: 1 };
+    var state = { color: 'Blanc', colorPrice: 0, storage: '256 Go', storagePrice: 0, os: 'Bazzite (recommandé)', osPrice: 0, qty: 1 };
 
     function selectInGroup(groupEl, btn){
       groupEl.querySelectorAll('button').forEach(function(b){ b.classList.remove('selected'); });

@@ -372,7 +372,7 @@
     <div class="hero-label">PRISM SIGNATURE — AIO Liquid Cooled</div>
     <h1>Le haut de gamme.<br>100% <em>sur mesure.</em></h1>
     <div class="hero-price"><sup>€</sup>599</div>
-    <p class="hero-desc">Refroidissement liquide AIO, RGB intérieur, logo gravé, SSD 1 To minimum. Chaque PRISM Signature est unique et livrée avec un certificat numéroté.</p>
+    <p class="hero-desc">Refroidissement liquide AIO, RGB intérieur, logo gravé, SSD 512 Go minimum. Chaque PRISM Signature est unique et livrée avec un certificat numéroté.</p>
     <a href="#configurateur" class="btn-order">Configurer & commander</a>
     <div style="margin-top:1.5rem;">
       <span class="fr-badge"><span class="fr-flag"></span>Fabriquée à la main en France · numérotée</span>
@@ -413,9 +413,9 @@
     <div class="config-row">
       <div class="config-label">Stockage SSD</div>
       <div class="pill-group" id="storagePills">
-        <button type="button" class="pill selected" data-value="1 To" data-price="0">1 To <span>inclus</span></button>
-        <button type="button" class="pill" data-value="2 To" data-price="80">2 To <span>+80€</span></button>
-        <button type="button" class="pill" data-value="4 To" data-price="220">4 To <span>+220€</span></button>
+        <button type="button" class="pill selected" data-value="512 Go" data-price="0">512 Go <span>inclus</span></button>
+        <button type="button" class="pill" data-value="1 To" data-price="119">1 To <span>+119€</span></button>
+        <button type="button" class="pill" data-value="2 To" data-price="250">2 To <span>+250€</span></button>
       </div>
     </div>
 
@@ -473,8 +473,8 @@
     </div>
     <div class="diff-item">
       <div class="diff-num">04</div>
-      <h3>SSD 1 To minimum</h3>
-      <p>Au moins 1 To de stockage NVMe inclus. De la place pour votre bibliothèque Steam complète sans compromis.</p>
+      <h3>SSD 512 Go minimum</h3>
+      <p>Au moins 512 Go de stockage NVMe inclus. De la place pour votre bibliothèque Steam sans compromis.</p>
     </div>
     <div class="diff-item">
       <div class="diff-num">05</div>
@@ -498,7 +498,7 @@
     <div class="spec-row"><span class="spec-key">CPU</span><span class="spec-val">6× AMD Zen 2 — jusqu'à 3.5 GHz (SMT)</span></div>
     <div class="spec-row"><span class="spec-key">GPU</span><span class="spec-val">24 CU RDNA 2 — AMD Cyan Skillfish (APU PS5)</span></div>
     <div class="spec-row"><span class="spec-key">Mémoire</span><span class="spec-val">16 GB GDDR6 unifiée CPU + GPU</span></div>
-    <div class="spec-row"><span class="spec-key">Stockage</span><span class="spec-val">NVMe M.2 PCIe 2280 — 1 To minimum <span class="spec-badge">SIGNATURE</span></span></div>
+    <div class="spec-row"><span class="spec-key">Stockage</span><span class="spec-val">NVMe M.2 PCIe 2280 — 512 Go minimum <span class="spec-badge">SIGNATURE</span></span></div>
     <div class="spec-row"><span class="spec-key">Réseau</span><span class="spec-val">WiFi 6 + Bluetooth 5 — TP-Link AX900</span></div>
     <div class="spec-row"><span class="spec-key">Vidéo</span><span class="spec-val">DisplayPort 1.4</span></div>
     <div class="spec-row"><span class="spec-key">USB</span><span class="spec-val">2× USB 3.0 · 2× USB 2.0</span></div>
@@ -519,7 +519,7 @@
   <div class="includes">
     <div class="include-item"><h3>APU AMD Cyan Skillfish</h3><p>La puce graphique de la PS5, recyclée. 24 CU RDNA 2 + 6 cœurs Zen 2 dans un format compact.</p></div>
     <div class="include-item"><h3>16 GB GDDR6</h3><p>16 Go partagés entre le processeur et la carte graphique. Rien d'autre à acheter.</p></div>
-    <div class="include-item include-highlight"><h3>SSD NVMe 1 To+</h3><p>Au moins 1 To inclus. Capacité supérieure disponible sur demande.</p></div>
+    <div class="include-item include-highlight"><h3>SSD NVMe 512 Go+</h3><p>Au moins 512 Go inclus. Capacité supérieure disponible en option.</p></div>
     <div class="include-item"><h3>WiFi 6 + Bluetooth 5</h3><p>Carte TP-Link AX900. Manettes, casques, réseau — tout sans câble.</p></div>
     <div class="include-item include-highlight"><h3>AIO Thermalright</h3><p>Refroidissement liquide complet inclus et monté. Silencieux, efficace.</p></div>
     <div class="include-item include-highlight"><h3>RGB ventilateur + intérieur</h3><p>Strip ARGB et fan RGB inclus et configurés.</p></div>
@@ -720,7 +720,7 @@
   // ===== Configurateur produit =====
   (function(){
     var basePrice = 599;
-    var state = { color: 'Noir', colorPrice: 0, storage: '1 To', storagePrice: 0, os: 'Bazzite (recommandé)', osPrice: 0, qty: 1 };
+    var state = { color: 'Noir', colorPrice: 0, storage: '512 Go', storagePrice: 0, os: 'Bazzite (recommandé)', osPrice: 0, qty: 1 };
 
     function selectInGroup(groupEl, btn){
       groupEl.querySelectorAll('button').forEach(function(b){ b.classList.remove('selected'); });
