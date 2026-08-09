@@ -64,6 +64,16 @@
   .model-card-price{font-family:'Instrument Serif',serif;font-size:1.5rem;font-weight:400}
   .model-card-desc{font-size:0.7rem;color:var(--muted);margin-top:0.3rem}
   .model-card.selected .model-card-desc{color:color-mix(in srgb, var(--bg) 55%, transparent)}
+
+  .checkout-cart-summary{ border:1px solid var(--faint); border-radius:14px; padding:0.5rem 1.5rem; margin-bottom:1.75rem; }
+  .checkout-item{ display:flex; justify-content:space-between; gap:1rem; padding:1rem 0; border-bottom:1px solid var(--faint); }
+  .checkout-item:last-of-type{ border-bottom:none; }
+  .checkout-item-name{ font-size:0.85rem; font-weight:500; }
+  .checkout-item-opts{ font-size:0.72rem; color:var(--muted); margin-top:0.25rem; line-height:1.5; }
+  .checkout-item-price{ font-size:0.85rem; white-space:nowrap; flex-shrink:0; }
+  .checkout-total-row{ display:flex; justify-content:space-between; padding:1rem 0; border-top:1px solid var(--ink); font-weight:500; font-size:0.95rem; }
+  .checkout-empty{ font-size:0.85rem; color:var(--muted); padding:1.5rem 0; }
+  .checkout-empty a{ color:var(--ink); }
   .model-label{font-size:0.72rem;letter-spacing:0.12em;color:var(--muted);text-transform:uppercase;margin-bottom:0.75rem}
 
   .submit-btn{width:100%;background:var(--ink);color:var(--bg);padding:1.1rem;font-size:0.85rem;font-weight:400;letter-spacing:0.1em;border:none;cursor:pointer;font-family:'Instrument Sans',sans-serif;transition:opacity 0.2s;margin-top:0.5rem}
@@ -225,7 +235,7 @@
       <text x="30" y="17" font-family="-apple-system,sans-serif" font-size="14" font-weight="600" fill="var(--ink)" letter-spacing="2">PRISM</text>
     </svg>
   </a>
-  <a href="javascript:history.back()" class="nav-back">← Retour</a>
+  <a href="panier.html" class="nav-back">← Retour au panier</a>
   <button class="theme-toggle" onclick="toggleTheme()" aria-label="Basculer mode sombre / clair" title="Mode sombre / clair">
     <svg class="icon-sun" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.2"/><line x1="12" y1="1.5" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22.5"/><line x1="3.5" y1="12" x2="1" y2="12"/><line x1="23" y1="12" x2="20.5" y2="12"/><line x1="5" y1="5" x2="6.8" y2="6.8"/><line x1="17.2" y1="17.2" x2="19" y2="19"/><line x1="19" y1="5" x2="17.2" y2="6.8"/><line x1="6.8" y1="17.2" x2="5" y2="19"/></svg>
     <svg class="icon-moon" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"/></svg>
@@ -237,15 +247,15 @@
   <!-- LEFT INFO -->
   <div>
     <div class="info-label">Passer commande</div>
-    <h1 class="info-title">Votre PRISM, à votre image.</h1>
-    <p class="info-desc">Remplissez le formulaire, nous vous recontactons sous 48h pour confirmer les détails, le délai et le paiement.</p>
+    <h1 class="info-title">Finalisez votre commande.</h1>
+    <p class="info-desc">Vérifiez votre panier, indiquez vos coordonnées, nous vous recontactons sous 48h pour confirmer les détails et le paiement.</p>
     <span class="fr-badge"><span class="fr-flag"></span>Fabriquée à la main en France</span>
     <div class="info-steps reveal">
       <div class="info-step">
         <div class="step-num">01</div>
         <div class="step-text">
-          <h4>Vous commandez</h4>
-          <p>Remplissez le formulaire avec vos préférences de modèle, couleur et stockage.</p>
+          <h4>Vous validez votre panier</h4>
+          <p>Vos PRISM configurées, avec couleur, stockage et options choisies.</p>
         </div>
       </div>
       <div class="info-step">
@@ -275,31 +285,13 @@
   <!-- FORM -->
   <div class="form-wrap reveal">
     <div class="form-header">
-      <div class="form-header-label">Formulaire de commande</div>
-      <h2>Configurer votre PRISM</h2>
+      <div class="form-header-label">Récapitulatif & coordonnées</div>
+      <h2>Votre commande</h2>
     </div>
 
     <form action="https://formspree.io/f/xwvykgdv" method="POST" id="orderForm">
 
-
-      <!-- MODEL -->
-      <div style="margin-bottom:1.5rem">
-        <div class="model-label">Modèle *</div>
-        <div class="model-cards" id="modelCards">
-          <label class="model-card selected" id="card-one">
-            <input type="radio" name="modele" value="PRISM ONE — 399€" checked onchange="selectModel('one')"/>
-            <div class="model-card-name">PRISM ONE</div>
-            <div class="model-card-price">399€</div>
-            <div class="model-card-desc">Ventilateur Arctic P12 Pro</div>
-          </label>
-          <label class="model-card" id="card-sig">
-            <input type="radio" name="modele" value="PRISM SIGNATURE — 599€" onchange="selectModel('sig')"/>
-            <div class="model-card-name">PRISM SIGNATURE</div>
-            <div class="model-card-price">599€</div>
-            <div class="model-card-desc">AIO Liquid Cooled + RGB + Logo</div>
-          </label>
-        </div>
-      </div>
+      <div class="checkout-cart-summary" id="checkoutCartSummary"></div>
 
       <!-- NOM / EMAIL -->
       <div class="field-row">
@@ -313,51 +305,26 @@
         </div>
       </div>
 
-      <!-- COULEUR / STOCKAGE -->
+      <!-- TELEPHONE / ADRESSE -->
       <div class="field-row">
         <div class="field">
-          <label>Couleur du boîtier</label>
-          <select name="couleur">
-            <option value="">Pas de préférence</option>
-            <option>Blanc / Ivoire</option>
-            <option>Noir mat</option>
-            <option>Gris anthracite</option>
-            <option>Beige / Sable</option>
-            <option>Bleu nuit</option>
-            <option>Rouge</option>
-            <option>Autre (préciser dans le message)</option>
-          </select>
+          <label>Téléphone</label>
+          <input type="tel" name="telephone" placeholder="06 12 34 56 78"/>
         </div>
         <div class="field">
-          <label>Stockage SSD</label>
-          <select name="stockage">
-            <option value="">Pas de préférence</option>
-            <option>256 Go</option>
-            <option>512 Go</option>
-            <option>1 To</option>
-            <option>2 To</option>
-            <option>4 To</option>
-          </select>
+          <label>Adresse de livraison *</label>
+          <input type="text" name="adresse" placeholder="12 rue de la Paix, 75002 Paris" required/>
         </div>
-      </div>
-
-      <!-- OS -->
-      <div class="field">
-        <label>Système d'exploitation</label>
-        <select name="os">
-          <option>Bazzite (recommandé)</option>
-          <option>CachyOS</option>
-          <option>SteamOS</option>
-          <option>Autre (préciser dans le message)</option>
-          <option>Sans OS préinstallé</option>
-        </select>
       </div>
 
       <!-- MESSAGE -->
       <div class="field">
-        <label>Message / Personnalisation</label>
-        <textarea name="message" placeholder="Logo à graver, couleur custom, questions, délai souhaité…"></textarea>
+        <label>Message (optionnel)</label>
+        <textarea name="message" placeholder="Précisions, questions, délai souhaité…"></textarea>
       </div>
+
+      <input type="hidden" name="commande" id="commandeHidden">
+      <input type="hidden" name="total" id="totalHidden">
 
       <button type="submit" class="submit-btn">Envoyer ma commande</button>
       <p class="form-note">Aucun paiement maintenant. Nous vous recontactons sous 48h pour finaliser ensemble.</p>
@@ -405,6 +372,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script>
+<script src="cart.js"></script>
 <script>
   function toggleTheme(){
     var root = document.documentElement;
@@ -484,51 +452,72 @@
     els.forEach(function(el){ io.observe(el); });
   })();
 
-  // Model card toggle
-  function selectModel(m) {
-    document.getElementById('card-one').classList.toggle('selected', m === 'one');
-    document.getElementById('card-sig').classList.toggle('selected', m === 'sig');
-  }
+  // Récapitulatif du panier
+  function renderCheckoutSummary(){
+    var box = document.getElementById('checkoutCartSummary');
+    if(typeof PrismCart === 'undefined' || !box) return;
+    var items = PrismCart.getAll();
 
-  // Pre-select model + mode from URL params
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('model') === 'signature') {
-    document.querySelector('input[value="PRISM SIGNATURE — 599€"]').checked = true;
-    selectModel('sig');
+    if(!items.length){
+      box.innerHTML = '<div class="checkout-empty">Votre panier est vide. <a href="index.html#prix">Configurer une PRISM →</a></div>';
+      var submitBtn = document.querySelector('.submit-btn');
+      if(submitBtn) submitBtn.disabled = true;
+      return;
+    }
+
+    var rows = items.map(function(item){
+      var opts = [item.color, item.storage, item.os].filter(Boolean).join(' · ');
+      if(item.engraving) opts += ' · Gravure : "' + item.engraving + '"';
+      return '<div class="checkout-item">' +
+        '<div><div class="checkout-item-name">' + item.qty + '× ' + item.modelLabel + '</div><div class="checkout-item-opts">' + opts + '</div></div>' +
+        '<div class="checkout-item-price">' + (item.unitPrice * item.qty).toLocaleString('fr-FR') + ' €</div>' +
+      '</div>';
+    }).join('');
+
+    var total = PrismCart.getTotal();
+    box.innerHTML = rows + '<div class="checkout-total-row"><span>Total</span><span>' + total.toLocaleString('fr-FR') + ' €</span></div>';
+
+    var commandeEl = document.getElementById('commandeHidden');
+    var totalEl = document.getElementById('totalHidden');
+    if(commandeEl) commandeEl.value = items.map(function(i){
+      return i.qty + 'x ' + i.modelLabel + ' (' + [i.color, i.storage, i.os].filter(Boolean).join(', ') + (i.engraving ? ', Gravure: ' + i.engraving : '') + ') = ' + (i.unitPrice * i.qty) + '€';
+    }).join(' | ');
+    if(totalEl) totalEl.value = total + ' €';
   }
-  if (params.get('devis') === '1') {
-    document.querySelector('.form-header h2').textContent = 'Demander un devis personnalisé';
-    document.querySelector('.submit-btn').textContent = 'Envoyer ma demande de devis';
-    document.querySelector('.form-note').textContent = 'Nous vous répondrons sous 48h avec un devis détaillé adapté à votre demande.';
-    document.querySelector('.info-title').textContent = 'Parlez-nous de votre projet.';
-    document.querySelector('.info-desc').textContent = 'Logo custom, couleur spéciale, configuration unique — décrivez ce que vous souhaitez et nous vous préparons un devis sur mesure.';
-  }
+  renderCheckoutSummary();
 
   // Handle form submission
   const form = document.getElementById('orderForm');
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    if(typeof PrismCart !== 'undefined' && PrismCart.getAll().length === 0){
+      window.location.href = 'panier.html';
+      return;
+    }
     const data = new FormData(form);
     const submitBtn = document.querySelector('.submit-btn');
     const originalBtnText = submitBtn.textContent;
     submitBtn.disabled = true;
     submitBtn.textContent = 'Envoi en cours…';
 
-    // Si un client est connecté, on enregistre aussi la commande dans son espace client
+    // Si un client est connecté, on enregistre chaque article du panier dans son espace client
     let savedToSupabase = false;
     try {
-      if (typeof supabaseClient !== 'undefined') {
+      if (typeof supabaseClient !== 'undefined' && typeof PrismCart !== 'undefined') {
         const { data: sessionData } = await supabaseClient.auth.getSession();
         if (sessionData && sessionData.session) {
-          const modeleVal = data.get('modele') || '';
-          const { error } = await supabaseClient.from('orders').insert({
-            user_id: sessionData.session.user.id,
-            model: modeleVal.indexOf('SIGNATURE') !== -1 ? 'signature' : 'one',
-            color: data.get('couleur') || '',
-            storage: data.get('stockage') || '',
-            os: data.get('os') || '',
-            message: data.get('message') || ''
+          const cartItems = PrismCart.getAll();
+          const rows = cartItems.map(function(item){
+            return {
+              user_id: sessionData.session.user.id,
+              model: item.model,
+              color: item.color || '',
+              storage: item.storage || '',
+              os: item.os || '',
+              message: (item.engraving ? 'Gravure: ' + item.engraving + '. ' : '') + (data.get('message') || '')
+            };
           });
+          const { error } = await supabaseClient.from('orders').insert(rows);
           if (!error) savedToSupabase = true;
         }
       }
@@ -537,6 +526,7 @@
     }
 
     function showSuccess() {
+      if(typeof PrismCart !== 'undefined') PrismCart.clear();
       document.querySelector('.page').style.display = 'none';
       document.getElementById('successPage').style.display = 'block';
       window.scrollTo(0, 0);

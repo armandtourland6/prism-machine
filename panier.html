@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+(function(){
+  try{
+    var t = localStorage.getItem('prism-theme');
+    if(!t){ t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+    document.documentElement.setAttribute('data-theme', t);
+  }catch(e){}
+})();
+</script>
+<title>Mon panier — PRISM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{--bg:#fafaf8;--ink:#111110;--muted:#999994;--faint:#e8e8e4;--purple:#845ef7}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:'Instrument Sans',sans-serif;font-weight:300;line-height:1.6;min-height:100vh}
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.4rem 3rem;background:rgba(250,250,248,0.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--faint)}
+  .nav-logo{display:flex;align-items:center;text-decoration:none}
+  .nav-back{font-size:0.75rem;color:var(--muted);text-decoration:none;letter-spacing:0.06em;border-bottom:1px solid var(--faint);padding-bottom:1px;transition:color 0.2s}
+  .nav-back:hover{color:var(--ink);border-color:var(--ink)}
+
+  .page{max-width:900px;margin:0 auto;padding:9rem 3rem 6rem}
+  .label{font-size:0.65rem;letter-spacing:0.25em;color:var(--muted);text-transform:uppercase;margin-bottom:1rem}
+  h1.title{font-family:'Instrument Serif',serif;font-size:clamp(1.8rem,4vw,2.6rem);font-weight:400;font-style:italic;margin-bottom:2.5rem}
+
+  .cart-item{
+    display:flex; gap:1.5rem; padding:1.75rem 0; border-bottom:1px solid var(--faint);
+    align-items:flex-start;
+  }
+  .cart-item:last-child{ border-bottom:none; }
+  .cart-item-thumb{
+    width:84px; height:84px; border-radius:14px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    background: color-mix(in srgb, var(--ink) 6%, transparent);
+  }
+  .cart-item-thumb svg{ opacity:0.55; }
+  .cart-item-info{ flex:1; min-width:0; }
+  .cart-item-model{ font-size:1rem; font-weight:500; margin-bottom:0.35rem; }
+  .cart-item-opts{ font-size:0.78rem; color:var(--muted); line-height:1.6; }
+  .cart-item-right{ display:flex; flex-direction:column; align-items:flex-end; gap:0.75rem; flex-shrink:0; }
+  .cart-item-price{ font-family:'Instrument Serif',serif; font-size:1.3rem; }
+  .cart-item-qty{
+    display:flex; align-items:center; gap:0.7rem;
+    border:1px solid var(--faint); border-radius:100px; padding:0.3rem 0.7rem;
+  }
+  .qty-btn-sm{
+    width:22px; height:22px; border-radius:50%; border:none; background:transparent;
+    color:var(--ink); font-size:0.9rem; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  }
+  .qty-btn-sm:hover{ background: color-mix(in srgb, var(--ink) 8%, transparent); }
+  .remove-btn{
+    font-size:0.72rem; color:var(--muted); background:none; border:none; cursor:pointer;
+    text-decoration:underline; padding:0; font-family:'Instrument Sans',sans-serif;
+  }
+  .remove-btn:hover{ color:#e03131; }
+
+  .cart-wrap{ border:1px solid var(--faint); border-radius:20px; padding:0 2rem; margin-bottom:2rem; }
+
+  .cart-summary{
+    border:1px solid var(--faint); border-radius:20px; padding:2rem;
+    display:flex; flex-direction:column; gap:1rem;
+  }
+  .summary-row{ display:flex; justify-content:space-between; font-size:0.85rem; color:var(--muted); }
+  .summary-row.total{ font-size:1.1rem; color:var(--ink); font-weight:500; padding-top:1rem; border-top:1px solid var(--faint); }
+  .summary-row.total .amount{ font-family:'Instrument Serif',serif; font-size:1.6rem; font-weight:400; }
+  .checkout-btn{
+    width:100%; background:var(--ink); color:var(--bg); border:none; border-radius:12px;
+    padding:1rem; font-size:0.9rem; font-weight:500; letter-spacing:0.04em; cursor:pointer;
+    font-family:'Instrument Sans',sans-serif; text-decoration:none; text-align:center; display:block;
+    margin-top:0.5rem; transition: transform .2s ease;
+  }
+  .checkout-btn:hover{ transform:translateY(-2px); }
+
+  .empty-cart{
+    border:1px solid var(--faint); border-radius:20px; padding:4rem 2rem; text-align:center;
+  }
+  .empty-cart-icon{ margin-bottom:1.5rem; opacity:0.3; }
+  .empty-cart p{ color:var(--muted); font-size:0.9rem; margin-bottom:1.75rem; }
+  .empty-cart a{
+    display:inline-block; background:var(--ink); color:var(--bg); text-decoration:none;
+    padding:0.85rem 1.75rem; border-radius:12px; font-size:0.85rem; letter-spacing:0.04em;
+  }
+
+  .theme-toggle{
+    width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    background:color-mix(in srgb, var(--bg) 45%, transparent);border:1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+    -webkit-backdrop-filter:blur(14px) saturate(1.6);backdrop-filter:blur(14px) saturate(1.6);
+    color:var(--ink);cursor:pointer;flex-shrink:0;-webkit-tap-highlight-color:transparent;
+  }
+  .theme-toggle:hover{transform:scale(1.07)}
+  .theme-toggle .icon-moon{display:none}
+  [data-theme="dark"] .theme-toggle .icon-sun{display:none}
+  [data-theme="dark"] .theme-toggle .icon-moon{display:block}
+
+  [data-theme="dark"]{--bg:#0c0c0d;--ink:#f1f1ec;--muted:#93938d;--faint:#29292b}
+  html,body{transition:background-color .4s ease,color .4s ease}
+  nav{
+    background:color-mix(in srgb, var(--bg) 65%, transparent) !important;
+    -webkit-backdrop-filter:blur(22px) saturate(1.6);backdrop-filter:blur(22px) saturate(1.6);
+    border:1px solid color-mix(in srgb, var(--ink) 8%, transparent) !important;
+    top:0.85rem;left:1.25rem;right:1.25rem;border-radius:18px;
+    box-shadow:0 8px 30px color-mix(in srgb, var(--ink) 8%, transparent);
+  }
+  .cart-wrap, .cart-summary, .empty-cart{
+    border-radius:20px !important;
+    background:color-mix(in srgb, var(--bg) 55%, transparent);
+    -webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4);
+  }
+
+  .reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease-out,transform .6s ease-out}
+  .reveal.in{opacity:1;transform:translateY(0)}
+  @media (max-width:768px){
+    .reveal{ transform:none; transition:opacity .45s ease-out; }
+    .reveal.in{ transform:none; }
+  }
+
+  @media (max-width:768px){
+    nav{padding:1rem 1.5rem;top:0.5rem;left:0.6rem;right:0.6rem;border-radius:16px}
+    .theme-toggle{width:40px;height:40px}
+    .page{padding:7rem 1.5rem 4rem}
+    .cart-wrap{ padding:0 1.25rem; }
+    .cart-item{ flex-wrap:wrap; gap:1rem; }
+    .cart-item-thumb{ width:64px; height:64px; }
+    .cart-item-right{ width:100%; flex-direction:row; align-items:center; justify-content:space-between; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">
+    <svg viewBox="0 0 115 24" height="18">
+      <g stroke="var(--ink)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="12,1 2,23 22,23" stroke-width="1.6"/>
+        <line x1="12" y1="1" x2="12" y2="23" stroke-width="1"/>
+        <line x1="6" y1="14" x2="18" y2="14" stroke-width="1"/>
+        <line x1="2" y1="23" x2="18" y2="14" stroke-width="1"/>
+        <line x1="22" y1="23" x2="6" y2="14" stroke-width="1"/>
+      </g>
+      <text x="30" y="17" font-family="-apple-system,sans-serif" font-size="14" font-weight="600" fill="var(--ink)" letter-spacing="2">PRISM</text>
+    </svg>
+  </a>
+  <a href="index.html" class="nav-back">← Continuer mes achats</a>
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Basculer mode sombre / clair" title="Mode sombre / clair">
+    <svg class="icon-sun" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.2"/><line x1="12" y1="1.5" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22.5"/><line x1="3.5" y1="12" x2="1" y2="12"/><line x1="23" y1="12" x2="20.5" y2="12"/><line x1="5" y1="5" x2="6.8" y2="6.8"/><line x1="17.2" y1="17.2" x2="19" y2="19"/><line x1="19" y1="5" x2="17.2" y2="6.8"/><line x1="6.8" y1="17.2" x2="5" y2="19"/></svg>
+    <svg class="icon-moon" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"/></svg>
+  </button>
+</nav>
+
+<div class="page">
+  <div class="label">Panier</div>
+  <h1 class="title" id="pageTitle">Votre panier.</h1>
+
+  <div id="cartContainer"></div>
+</div>
+
+<script src="cart.js"></script>
+<script>
+  function toggleTheme(){
+    var root = document.documentElement;
+    var next = (root.getAttribute('data-theme') === 'dark') ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try{ localStorage.setItem('prism-theme', next); }catch(e){}
+  }
+
+  function fmt(n){ return n.toLocaleString('fr-FR') + ' €'; }
+
+  function renderCart(){
+    var container = document.getElementById('cartContainer');
+    var items = PrismCart.getAll();
+    var titleEl = document.getElementById('pageTitle');
+
+    if(!items.length){
+      titleEl.textContent = 'Votre panier est vide.';
+      container.innerHTML =
+        '<div class="empty-cart reveal in">' +
+          '<div class="empty-cart-icon"><svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div>' +
+          '<p>Aucune PRISM configurée pour le moment.</p>' +
+          '<a href="index.html#prix">Découvrir les modèles →</a>' +
+        '</div>';
+      return;
+    }
+
+    titleEl.textContent = items.length > 1 ? 'Votre panier (' + items.reduce(function(s,i){return s+i.qty;},0) + ' articles).' : 'Votre panier.';
+
+    var rows = items.map(function(item){
+      var opts = [item.color, item.storage, item.os].filter(Boolean).join(' · ');
+      if(item.engraving) opts += ' · Gravure : "' + item.engraving + '"';
+      return (
+        '<div class="cart-item" data-id="' + item.id + '">' +
+          '<div class="cart-item-thumb"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><line x1="7" y1="10" x2="7" y2="14"/><line x1="11" y1="10" x2="11" y2="14"/><line x1="15" y1="10" x2="15" y2="14"/></svg></div>' +
+          '<div class="cart-item-info">' +
+            '<div class="cart-item-model">' + item.modelLabel + '</div>' +
+            '<div class="cart-item-opts">' + opts + '</div>' +
+          '</div>' +
+          '<div class="cart-item-right">' +
+            '<div class="cart-item-price">' + fmt(item.unitPrice * item.qty) + '</div>' +
+            '<div class="cart-item-qty">' +
+              '<button type="button" class="qty-btn-sm" data-action="dec">−</button>' +
+              '<span>' + item.qty + '</span>' +
+              '<button type="button" class="qty-btn-sm" data-action="inc">+</button>' +
+            '</div>' +
+            '<button type="button" class="remove-btn" data-action="remove">Retirer</button>' +
+          '</div>' +
+        '</div>'
+      );
+    }).join('');
+
+    var total = PrismCart.getTotal();
+    container.innerHTML =
+      '<div class="cart-wrap reveal in">' + rows + '</div>' +
+      '<div class="cart-summary reveal in">' +
+        '<div class="summary-row"><span>Sous-total</span><span>' + fmt(total) + '</span></div>' +
+        '<div class="summary-row"><span>Livraison</span><span>Calculée à l\'étape suivante</span></div>' +
+        '<div class="summary-row total"><span>Total</span><span class="amount">' + fmt(total) + '</span></div>' +
+        '<a href="order.html" class="checkout-btn">Passer commande</a>' +
+      '</div>';
+
+    container.querySelectorAll('[data-action]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var id = btn.closest('.cart-item').getAttribute('data-id');
+        var action = btn.getAttribute('data-action');
+        var item = PrismCart.getAll().filter(function(i){ return i.id === id; })[0];
+        if(!item) return;
+        if(action === 'inc'){ PrismCart.updateQty(id, item.qty + 1); }
+        else if(action === 'dec'){ PrismCart.updateQty(id, Math.max(1, item.qty - 1)); }
+        else if(action === 'remove'){ PrismCart.remove(id); }
+        renderCart();
+      });
+    });
+  }
+
+  renderCart();
+  window.addEventListener('prism-cart-updated', renderCart);
+</script>
+
+</body>
+</html>
