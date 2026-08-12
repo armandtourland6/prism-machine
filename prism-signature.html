@@ -331,6 +331,17 @@
     transform: skewX(-20deg); transition:left .65s cubic-bezier(.22,1,.36,1); pointer-events:none; z-index:1;
   }
   .btn-order:hover::after, .nav-cta:hover::after{ left:130%; }
+
+  .pill-noctua{
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+  .pill-noctua .noctua-logo{
+    flex-shrink: 0;
+    border-radius: 50%;
+    vertical-align: middle;
+  }
 </style>
 </head>
 <body>
@@ -406,8 +417,24 @@
         <button type="button" class="swatch" data-value="Blanc" data-price="0" style="--swatch-color:#f2f2ef;" aria-label="Blanc"></button>
         <button type="button" class="swatch" data-value="Gris anthracite" data-price="0" style="--swatch-color:#4a4a48;" aria-label="Gris anthracite"></button>
         <button type="button" class="swatch" data-value="Bleu nuit" data-price="0" style="--swatch-color:#2b3a55;" aria-label="Bleu nuit"></button>
+        <button type="button" class="swatch" data-value="Rouge brique" data-price="0" style="--swatch-color:#8B3A3A;" aria-label="Rouge brique"></button>
+        <button type="button" class="swatch" data-value="Vert forêt" data-price="0" style="--swatch-color:#2D4A3E;" aria-label="Vert forêt"></button>
+        <button type="button" class="swatch" data-value="Sable" data-price="0" style="--swatch-color:#C4B5A0;" aria-label="Sable"></button>
+        <button type="button" class="swatch" data-value="Violet" data-price="0" style="--swatch-color:#4A3B5C;" aria-label="Violet"></button>
+        <button type="button" class="swatch" data-value="Terracotta" data-price="0" style="--swatch-color:#C45C3A;" aria-label="Terracotta"></button>
+        <button type="button" class="swatch" data-value="Rose poudré" data-price="0" style="--swatch-color:#D4A5A5;" aria-label="Rose poudré"></button>
+        <button type="button" class="swatch" data-value="Olive" data-price="0" style="--swatch-color:#6B7A4B;" aria-label="Olive"></button>
+        <button type="button" class="swatch" data-value="Bleu glacier" data-price="0" style="--swatch-color:#7A9BB0;" aria-label="Bleu glacier"></button>
       </div>
       <div class="config-current" id="colorCurrent">Noir</div>
+    </div>
+
+    <div class="config-row">
+      <div class="config-label">Refroidissement</div>
+      <div class="pill-group" id="coolingPills">
+        <button type="button" class="pill selected" data-value="AIO Thermalright" data-price="0">AIO Thermalright <span>inclus</span></button>
+        <button type="button" class="pill pill-noctua" data-value="Noctua" data-price="115"><svg class="noctua-logo" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#6B4423"/><circle cx="12" cy="12" r="7.5" fill="none" stroke="#D4A574" stroke-width="1.4"/><path d="M12 5.5c1.8 2.2 2.8 4.2 2.8 6.5 0 2.3-1 4.3-2.8 6.5-1.8-2.2-2.8-4.2-2.8-6.5 0-2.3 1-4.3 2.8-6.5z" fill="#D4A574"/><circle cx="12" cy="12" r="2.2" fill="#F5E6D3"/></svg> Noctua <span>+115€</span></button>
+      </div>
     </div>
 
     <div class="config-row">
@@ -720,7 +747,7 @@
   // ===== Configurateur produit =====
   (function(){
     var basePrice = 599;
-    var state = { color: 'Noir', colorPrice: 0, storage: '512 Go', storagePrice: 0, os: 'Bazzite (recommandé)', osPrice: 0, qty: 1 };
+    var state = { color: 'Noir', colorPrice: 0, cooling: 'AIO Thermalright', coolingPrice: 0, storage: '512 Go', storagePrice: 0, os: 'Bazzite (recommandé)', osPrice: 0, qty: 1 };
 
     function selectInGroup(groupEl, btn){
       groupEl.querySelectorAll('button').forEach(function(b){ b.classList.remove('selected'); });
@@ -743,6 +770,7 @@
       var cur = document.getElementById('colorCurrent');
       if(cur) cur.textContent = btn.getAttribute('data-value');
     });
+    bindGroup('coolingPills', 'cooling', 'coolingPrice');
     bindGroup('storagePills', 'storage', 'storagePrice');
     bindGroup('osPills', 'os', 'osPrice');
 
@@ -760,7 +788,7 @@
       updatePrice();
     });
 
-    function unitPrice(){ return basePrice + state.colorPrice + state.storagePrice + state.osPrice; }
+    function unitPrice(){ return basePrice + state.colorPrice + state.coolingPrice + state.storagePrice + state.osPrice; }
     function updatePrice(){
       var priceEl = document.getElementById('configPrice');
       if(priceEl) priceEl.textContent = (unitPrice() * state.qty).toLocaleString('fr-FR') + ' €';
@@ -775,6 +803,7 @@
         model: 'signature',
         modelLabel: 'PRISM SIGNATURE',
         color: state.color,
+        cooling: state.cooling,
         storage: state.storage,
         os: state.os,
         engraving: engravingInput ? engravingInput.value.trim() : '',
